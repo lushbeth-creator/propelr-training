@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — Pricing That Wins</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a2e;
+    padding: 1.2rem 1rem;
+  }
+
+  .container { width: 100%; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border: 1.5px solid #e0e6ff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .tab {
+    flex: 1;
+    background: #fff;
+    border: none;
+    border-right: 1px solid #e0e6ff;
+    padding: .75rem .5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .tab:last-child { border-right: none; }
+  .tab:hover { background: #f3f6ff; color: #5D70AE; }
+  .tab.active { background: #5D70AE; color: #fff; }
+  .tab .tab-sub {
+    display: block;
+    font-size: .68rem;
+    font-weight: 400;
+    opacity: .8;
+    margin-top: .15rem;
+  }
+  .tab.active .tab-sub { opacity: .85; }
+
+  /* Pane */
+  .pane {
+    display: none;
+    background: #fff;
+    border: 1.5px solid #e0e6ff;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 1.6rem;
+    animation: fadeIn .2s ease;
+  }
+  .pane.show { display: block; }
+
+  .pane-who {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #59A398;
+    margin-bottom: .25rem;
+  }
+  .pane-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: .7rem;
+  }
+  .pane-desc {
+    font-size: .875rem;
+    color: #444;
+    line-height: 1.65;
+    margin-bottom: 1.1rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1.5px solid #DAF3EF;
+  }
+
+  .pane-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .9rem;
+    margin-bottom: 1rem;
+  }
+  .pane-box {
+    background: #f8f9ff;
+    border-radius: 8px;
+    padding: .9rem 1rem;
+  }
+  .pane-box h4 {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: #5D70AE;
+    margin-bottom: .4rem;
+  }
+  .pane-box p {
+    font-size: .835rem;
+    color: #444;
+    line-height: 1.55;
+  }
+  .pane-box ul {
+    padding-left: 1.1rem;
+    font-size: .835rem;
+    color: #444;
+    line-height: 1.8;
+  }
+  .pane-best {
+    font-size: .82rem;
+    color: #666;
+    margin-top: .2rem;
+  }
+  .pane-best strong { color: #1a1a2e; }
+
+  /* NER Calculator */
+  .calc {
+    background: #f3f6ff;
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1.4rem;
+  }
+  .calc-title {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #5D70AE;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .calc-title svg { flex-shrink: 0; }
+  .calc-row {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: .7rem;
+  }
+  .calc-row label {
+    font-size: .835rem;
+    color: #444;
+    font-weight: 500;
+    min-width: 160px;
+  }
+  .calc-row input {
+    flex: 1;
+    height: 36px;
+    border: 1.5px solid #d0d8f0;
+    border-radius: 7px;
+    padding: 0 .75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .875rem;
+    color: #1a1a2e;
+    background: #fff;
+    transition: border-color .15s;
+  }
+  .calc-row input:focus { outline: none; border-color: #5D70AE; }
+
+  .calc-result {
+    margin-top: .8rem;
+    padding: 1rem 1.1rem;
+    background: #fff;
+    border-radius: 8px;
+    border: 1.5px solid #e0e6ff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeIn .2s ease;
+  }
+  .ner-num {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1;
+  }
+  .ner-meta { flex: 1; min-width: 120px; }
+  .ner-label {
+    font-size: .75rem;
+    color: #999;
+    line-height: 1.4;
+  }
+  .ner-verdict {
+    font-size: .78rem;
+    font-weight: 700;
+    padding: .3rem .7rem;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+  .v-good { background: #e6fbf7; color: #1a6b5c; }
+  .v-ok   { background: #fff9e6; color: #7a5500; }
+  .v-high { background: #fdecea; color: #9b2020; }
+  .ner-note {
+    font-size: .8rem;
+    color: #555;
+    line-height: 1.5;
+    width: 100%;
+    margin-top: .3rem;
+    padding-top: .3rem;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .pane-grid { grid-template-columns: 1fr; }
+    .calc-row { flex-direction: column; align-items: flex-start; }
+    .calc-row label { min-width: unset; }
+    .calc-row input { width: 100%; }
+    .tab .tab-sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" role="tab" aria-selected="true"  onclick="showPane('ic', this)">
+      Interchange Plus
+      <span class="tab-sub">Merchant pays</span>
+    </button>
+    <button class="tab"        role="tab" aria-selected="false" onclick="showPane('dp', this)">
+      Dual Pricing
+      <span class="tab-sub">Merchant offsets</span>
+    </button>
+    <button class="tab"        role="tab" aria-selected="false" onclick="showPane('sc', this)">
+      Surcharge
+      <span class="tab-sub">Customer pays</span>
+    </button>
+  </div>
+
+  <!-- IC+ -->
+  <div class="pane show" id="pane-ic" role="tabpanel">
+    <p class="pane-who">Merchant Pays</p>
+    <p class="pane-title">Interchange Plus (IC+)</p>
+    <p class="pane-desc">Every transaction = interchange rate (set by Visa/MC) + your processor's fixed markup. Both appear separately on the statement. The most transparent model and the easiest to justify with a side-by-side comparison.</p>
+    <div class="pane-grid">
+      <div class="pane-box">
+        <h4>How to read a statement</h4>
+        <p>Push for itemized IC+ statements. Bundled statements hide costs. Itemized lets you spot card mix issues and B2B optimization opportunities.</p>
+      </div>
+      <div class="pane-box">
+        <h4>Card mix matters</h4>
+        <p>Rewards, corporate, and premium cards carry higher interchange — set by the card networks, not the processor. This is your opening to talk about cost offsets.</p>
+      </div>
+    </div>
+    <p class="pane-best"><strong>Best for:</strong> Merchants wanting full visibility, professional services, high-volume retail, B2B.</p>
+  </div>
+
+  <!-- Dual Pricing -->
+  <div class="pane" id="pane-dp" role="tabpanel">
+    <p class="pane-who">Merchant Offsets</p>
+    <p class="pane-title">Dual Pricing</p>
+    <p class="pane-desc">Merchant marks up listed prices to the "card price." Cash customers are discounted back down — up to 4%. The card price IS the advertised price. No fee added at point of sale.</p>
+    <div class="pane-grid">
+      <div class="pane-box">
+        <h4>What customers see</h4>
+        <p>Card price and cash price displayed side-by-side at checkout. No surprise fee — that's the key distinction from surcharging.</p>
+      </div>
+      <div class="pane-box">
+        <h4>Compatible platforms</h4>
+        <p>Valor PayTech (VP100, VP550, VP800) and SwipeSimple (A920 Pro, A80). Specify cash discount % in your deployment request notes.<br><br><em>Not supported on Square.</em></p>
+      </div>
+    </div>
+    <p class="pane-best"><strong>Best for:</strong> Retail, QSR, food trucks, any merchant with fixed posted pricing.</p>
+  </div>
+
+  <!-- Surcharge -->
+  <div class="pane" id="pane-sc" role="tabpanel">
+    <p class="pane-who">Customer Pays</p>
+    <p class="pane-title">Surcharge Program</p>
+    <p class="pane-desc">A percentage fee (1–3%) added at checkout for credit card transactions only. BIN lookup on compliant devices auto-recognizes and excludes debit automatically.</p>
+    <div class="pane-grid">
+      <div class="pane-box">
+        <h4>Compliance requirements</h4>
+        <ul>
+          <li>Posted signage required before the sale</li>
+          <li>Must apply at all locations — no cherry-picking</li>
+          <li>Not available in CT or MA</li>
+        </ul>
+      </div>
+      <div class="pane-box">
+        <h4>Card network rules</h4>
+        <p>Applied to Visa, MC, Discover, and AMEX OptBlue credit only. Surcharge never applies to debit or prepaid — BIN lookup handles this automatically.</p>
+      </div>
+    </div>
+    <p class="pane-best"><strong>Best for:</strong> Credit-heavy card mix, merchants wanting full fee elimination.</p>
+  </div>
+
+  <!-- NER Calculator -->
+  <div class="calc">
+    <p class="calc-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D70AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+      Net Effective Rate Calculator
+    </p>
+    <div class="calc-row">
+      <label for="fees">Total fees charged ($)</label>
+      <input type="number" id="fees" placeholder="e.g. 1250" oninput="calcNER()">
+    </div>
+    <div class="calc-row">
+      <label for="vol">Total processing volume ($)</label>
+      <input type="number" id="vol" placeholder="e.g. 65000" oninput="calcNER()">
+    </div>
+    <div class="calc-result" id="ner-result" style="display:none">
+      <div>
+        <div class="ner-num" id="ner-val">—</div>
+        <div class="ner-label">Net Effective Rate<br>Total Fees ÷ Total Volume</div>
+      </div>
+      <div class="ner-meta">
+        <div class="ner-verdict" id="ner-verdict"></div>
+      </div>
+      <div class="ner-note" id="ner-note"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showPane(id, btn) {
+  document.querySelectorAll('.pane').forEach(function(p) { p.classList.remove('show'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+  document.getElementById('pane-' + id).classList.add('show');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+}
+
+function calcNER() {
+  var f   = parseFloat(document.getElementById('fees').value);
+  var v   = parseFloat(document.getElementById('vol').value);
+  var res = document.getElementById('ner-result');
+  if (!f || !v || v === 0) { res.style.display = 'none'; return; }
+  var ner = (f / v) * 100;
+  res.style.display = 'flex';
+  document.getElementById('ner-val').textContent = ner.toFixed(2) + '%';
+  var verd = document.getElementById('ner-verdict');
+  var note = document.getElementById('ner-note');
+  if (ner < 2) {
+    verd.className = 'ner-verdict v-good';
+    verd.textContent = 'Competitive';
+    note.textContent = 'Under 2% — solid. Lead with transparency and long-term relationship value.';
+  } else if (ner <= 2.5) {
+    verd.className = 'ner-verdict v-ok';
+    verd.textContent = 'Improvable';
+    note.textContent = '2–2.5% — there\'s room to optimize. Ask for an itemized IC+ statement to find where costs are hiding.';
+  } else {
+    verd.className = 'ner-verdict v-high';
+    verd.textContent = 'Strong candidate';
+    note.textContent = 'Over 2.5% — a cost-offset conversation (dual pricing or surcharge) is worth having. Run a side-by-side proposal.';
+  }
+}
+</script>
+</body>
+</html>
