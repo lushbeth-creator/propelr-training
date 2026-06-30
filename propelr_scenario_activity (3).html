@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — Scenario Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.75rem}
+
+.scenario-header{background:#fff;border:1.5px solid #DAF3EF;border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:.85rem}
+.scenario-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D70AE;margin-bottom:6px}
+.scenario-title{font-family:'Qualy Neue','Inter',sans-serif;font-size:22px;font-weight:700;color:#59A398;margin-bottom:.7rem}
+.scenario-text{font-size:13.5px;color:#333;line-height:1.65}
+
+.q-section-label{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:.5rem}
+
+.q-wrap{border:1px solid #e0e6ff;border-radius:10px;padding:1rem 1.2rem;background:#fafbff}
+.q-progress{display:flex;gap:5px;margin-bottom:.9rem;cursor:pointer}
+.q-dot{flex:1;height:5px;border-radius:4px;background:#eef0f8;transition:background .15s}
+.q-dot.done{background:#5D70AE}
+.q-dot.current{background:#59A398}
+.q-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5D70AE;margin-bottom:.4rem}
+.q-text{font-size:14.5px;color:#1a1a2e;font-weight:500;line-height:1.55;margin-bottom:1rem;min-height:44px}
+.q-nav{display:flex;justify-content:space-between;align-items:center}
+.q-btn{display:inline-flex;align-items:center;gap:5px;background:#5D70AE;color:#fff;border:none;border-radius:7px;padding:.5rem 1rem;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s}
+.q-btn:hover{background:#4a5d9a}
+.q-btn:disabled{opacity:.35;cursor:default}
+.q-btn.ghost{background:none;color:#888;border:1px solid #e0e6ff}
+.q-btn.ghost:hover{background:#f8f9ff;color:#5D70AE}
+.q-count{font-size:11px;color:#999;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- Scenario always visible -->
+<div class="scenario-header">
+  <p class="scenario-label">Engagement · Which Solution Wins</p>
+  <p class="scenario-title">The Taco Mundo</p>
+  <p class="scenario-text">2 QSR locations, 22 employees, ~$68k/month in card transactions. Currently on Genius POS — "works okay, nothing special." Can't see sales across both locations in real-time. Asked about passing fees to customers. Owner is hands-on; staff resistant to change. Month-to-month, no ETF.</p>
+</div>
+
+<!-- Questions — always visible, one at a time -->
+<p class="q-section-label">Discussion questions</p>
+<div class="q-wrap">
+  <div class="q-progress" id="q-progress"></div>
+  <p class="q-label">Question <span id="q-num">1</span> of <span id="q-total">4</span></p>
+  <p class="q-text" id="q-text"></p>
+  <div class="q-nav">
+    <button class="q-btn ghost" id="q-prev" onclick="prevQ()">&#8592; Back</button>
+    <span class="q-count" id="q-count"></span>
+    <button class="q-btn" id="q-next" onclick="nextQ()">Next &#8594;</button>
+  </div>
+</div>
+
+<script>
+var questions = [
+  "Which solution would you recommend — and why?",
+  "What's your opening pitch to get them interested in dual pricing?",
+  "What's the biggest switching friction — and how do you handle it?",
+  "What discovery questions would you still need to ask?"
+];
+var qIdx = 0;
+
+function renderProgress() {
+  var prog = document.getElementById('q-progress');
+  var html = "";
+  for (var i = 0; i < questions.length; i++) {
+    var cls = i < qIdx ? "done" : (i === qIdx ? "current" : "");
+    html += '<div class="q-dot ' + cls + '" onclick="goToQ(' + i + ')"></div>';
+  }
+  prog.innerHTML = html;
+}
+
+function renderQuestion() {
+  document.getElementById('q-num').textContent = qIdx + 1;
+  document.getElementById('q-total').textContent = questions.length;
+  document.getElementById('q-text').textContent = questions[qIdx];
+  document.getElementById('q-prev').disabled = qIdx === 0;
+  var nextBtn = document.getElementById('q-next');
+  nextBtn.innerHTML = qIdx === questions.length - 1 ? "Done &#10003;" : "Next &#8594;";
+  renderProgress();
+}
+
+function nextQ() {
+  if (qIdx < questions.length - 1) {
+    qIdx++;
+    renderQuestion();
+  }
+}
+
+function prevQ() {
+  if (qIdx > 0) {
+    qIdx--;
+    renderQuestion();
+  }
+}
+
+function goToQ(i) {
+  qIdx = i;
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
