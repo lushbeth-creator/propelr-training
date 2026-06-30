@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — Pricing That Wins</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a2e;
+    padding: .6rem .75rem;
+  }
+
+  .container { width: 100%; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border: 1.5px solid #e0e6ff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .tab {
+    flex: 1;
+    background: #fff;
+    border: none;
+    border-right: 1px solid #e0e6ff;
+    padding: .7rem .5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .tab:last-child { border-right: none; }
+  .tab:hover { background: #f3f6ff; color: #5D70AE; }
+  .tab.active { background: #5D70AE; color: #fff; }
+  .tab .tab-sub {
+    display: block;
+    font-size: .68rem;
+    font-weight: 400;
+    opacity: .8;
+    margin-top: .15rem;
+  }
+  .tab.active .tab-sub { opacity: .85; }
+
+  /* Pane */
+  .pane {
+    display: none;
+    background: #fff;
+    border: 1.5px solid #e0e6ff;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 1.3rem 1.4rem;
+    animation: fadeIn .2s ease;
+  }
+  .pane.show { display: block; }
+
+  .pane-who {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #59A398;
+    margin-bottom: .25rem;
+  }
+  .pane-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: .6rem;
+  }
+  .pane-desc {
+    font-size: .85rem;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: .9rem;
+    padding-bottom: .9rem;
+    border-bottom: 1.5px solid #DAF3EF;
+  }
+
+  .pane-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem;
+    margin-bottom: .8rem;
+  }
+  .pane-box {
+    background: #f8f9ff;
+    border-radius: 8px;
+    padding: .8rem .9rem;
+  }
+  .pane-box h4 {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: #5D70AE;
+    margin-bottom: .35rem;
+  }
+  .pane-box p {
+    font-size: .82rem;
+    color: #444;
+    line-height: 1.5;
+  }
+  .pane-box ul {
+    padding-left: 1.1rem;
+    font-size: .82rem;
+    color: #444;
+    line-height: 1.75;
+  }
+  .pane-best {
+    font-size: .8rem;
+    color: #666;
+    margin-top: 0;
+  }
+  .pane-best strong { color: #1a1a2e; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .pane-grid { grid-template-columns: 1fr; }
+    .tab .tab-sub { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" role="tab" aria-selected="true"  onclick="showPane('ic', this)">
+      Interchange Plus
+      <span class="tab-sub">Merchant pays</span>
+    </button>
+    <button class="tab"        role="tab" aria-selected="false" onclick="showPane('dp', this)">
+      Dual Pricing
+      <span class="tab-sub">Merchant offsets</span>
+    </button>
+    <button class="tab"        role="tab" aria-selected="false" onclick="showPane('sc', this)">
+      Surcharge
+      <span class="tab-sub">Customer pays</span>
+    </button>
+  </div>
+
+  <!-- IC+ -->
+  <div class="pane show" id="pane-ic" role="tabpanel">
+    <p class="pane-who">Merchant Pays</p>
+    <p class="pane-title">Interchange Plus (IC+)</p>
+    <p class="pane-desc">Every transaction = interchange rate (set by Visa/MC) + your processor's fixed markup. Both appear separately on the statement. The most transparent model and the easiest to justify with a side-by-side comparison.</p>
+    <div class="pane-grid">
+      <div class="pane-box">
+        <h4>How to read a statement</h4>
+        <p>Push for itemized IC+ statements. Bundled statements hide costs. Itemized lets you spot card mix issues and B2B optimization opportunities.</p>
+      </div>
+      <div class="pane-box">
+        <h4>Card mix matters</h4>
+        <p>Rewards, corporate, and premium cards carry higher interchange — set by the card networks, not the processor. This is your opening to talk about cost offsets.</p>
+      </div>
+    </div>
+    <p class="pane-best"><strong>Best for:</strong> Merchants wanting full visibility, professional services, high-volume retail, B2B.</p>
+  </div>
+
+  <!-- Dual Pricing -->
+  <div class="pane" id="pane-dp" role="tabpanel">
+    <p class="pane-who">Merchant Offsets</p>
+    <p class="pane-title">Dual Pricing</p>
+    <p class="pane-desc">Merchant marks up listed prices to the "card price." Cash customers are discounted back down — up to 4%. The card price IS the advertised price. No fee added at point of sale.</p>
+    <div class="pane-grid">
+      <div class="pane-box">
+        <h4>What customers see</h4>
+        <p>Card price and cash price displayed side-by-side at checkout. No surprise fee — that's the key distinction from surcharging.</p>
+      </div>
+      <div class="pane-box">
+        <h4>Compatible platforms</h4>
+        <p>Valor PayTech (VP100, VP550, VP800) and SwipeSimple (A920 Pro, A80). Specify cash discount % in your deployment request notes.<br><br><em>Not supported on Square.</em></p>
+      </div>
+    </div>
+    <p class="pane-best"><strong>Best for:</strong> Retail, QSR, food trucks, any merchant with fixed posted pricing.</p>
+  </div>
+
+  <!-- Surcharge -->
+  <div class="pane" id="pane-sc" role="tabpanel">
+    <p class="pane-who">Customer Pays</p>
+    <p class="pane-title">Surcharge Program</p>
+    <p class="pane-desc">A percentage fee (1–3%) added at checkout for credit card transactions only. BIN lookup on compliant devices auto-recognizes and excludes debit automatically.</p>
+    <div class="pane-grid">
+      <div class="pane-box">
+        <h4>Compliance requirements</h4>
+        <ul>
+          <li>Posted signage required before the sale</li>
+          <li>Must apply at all locations — no cherry-picking</li>
+          <li>Not available in CT or MA</li>
+        </ul>
+      </div>
+      <div class="pane-box">
+        <h4>Card network rules</h4>
+        <p>Applied to Visa, MC, Discover, and AMEX OptBlue credit only. Surcharge never applies to debit or prepaid — BIN lookup handles this automatically.</p>
+      </div>
+    </div>
+    <p class="pane-best"><strong>Best for:</strong> Credit-heavy card mix, merchants wanting full fee elimination.</p>
+  </div>
+
+</div>
+
+<script>
+function showPane(id, btn) {
+  document.querySelectorAll('.pane').forEach(function(p) { p.classList.remove('show'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+  document.getElementById('pane-' + id).classList.add('show');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+}
+</script>
+</body>
+</html>
