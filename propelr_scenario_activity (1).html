@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — Scenario Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.75rem}
+
+/* Scenario header — always visible */
+.scenario-header{background:#fff;border:1.5px solid #DAF3EF;border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:.85rem}
+.scenario-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5D70AE;margin-bottom:6px}
+.scenario-title{font-family:'Qualy Neue','Inter',sans-serif;font-size:22px;font-weight:700;color:#59A398;margin-bottom:.7rem}
+.scenario-text{font-size:13.5px;color:#333;line-height:1.65}
+
+/* Question trigger */
+.q-trigger{background:#fff;border:1.5px solid #e0e6ff;border-radius:12px;padding:.85rem 1.1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.q-trigger:hover{border-color:#5D70AE;box-shadow:0 2px 12px rgba(93,112,174,.1)}
+.q-trigger-label{font-size:13px;font-weight:600;color:#1a1a2e}
+.q-trigger-hint{font-size:11px;font-weight:600;color:#5D70AE;background:#f3f6ff;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.q-trigger-hint svg{transition:transform .2s}
+.q-trigger.open .q-trigger-hint svg{transform:rotate(180deg)}
+
+/* Question stepper content */
+.q-content{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.q-content.open{max-height:300px}
+.q-wrap{border:1px solid #e0e6ff;border-radius:10px;padding:1rem 1.2rem;background:#fafbff;margin-bottom:.85rem}
+.q-progress{display:flex;gap:5px;margin-bottom:.9rem}
+.q-dot{flex:1;height:4px;border-radius:4px;background:#eef0f8}
+.q-dot.done{background:#5D70AE}
+.q-dot.current{background:#59A398}
+.q-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5D70AE;margin-bottom:.4rem}
+.q-text{font-size:14.5px;color:#1a1a2e;font-weight:500;line-height:1.55;margin-bottom:1rem;min-height:44px}
+.q-nav{display:flex;justify-content:space-between;align-items:center}
+.q-btn{display:inline-flex;align-items:center;gap:5px;background:#5D70AE;color:#fff;border:none;border-radius:7px;padding:.5rem 1rem;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s}
+.q-btn:hover{background:#4a5d9a}
+.q-btn:disabled{opacity:.35;cursor:default}
+.q-btn.ghost{background:none;color:#888;border:1px solid #e0e6ff}
+.q-btn.ghost:hover{background:#f8f9ff;color:#5D70AE}
+.q-count{font-size:11px;color:#999;font-weight:600}
+
+/* Resource cards — always visible, equal height */
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
+.rcard{border:1px solid #e0e6ff;border-radius:12px;padding:.9rem 1rem;background:#fff;display:flex;flex-direction:column;gap:.5rem;height:100%}
+.rcard-top{display:flex;align-items:center;gap:.6rem}
+.rcard-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#f3f6ff}
+.rcard-label{font-size:8.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5D70AE;margin-bottom:1px}
+.rcard-title{font-family:'Qualy Neue','Inter',sans-serif;font-size:14px;font-weight:700;color:#1B2F5B}
+.rcard-desc{font-size:11px;color:#666;line-height:1.45;flex:1}
+.rcard-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#5D70AE;border:none;border-radius:7px;padding:.4rem .8rem;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:none;color:#fff;transition:opacity .15s}
+.rcard-btn:hover{opacity:.88}
+</style>
+</head>
+<body>
+
+<!-- Scenario always visible -->
+<div class="scenario-header">
+  <p class="scenario-label">Engagement · Which Solution Wins</p>
+  <p class="scenario-title">The Taco Mundo</p>
+  <p class="scenario-text">2 QSR locations, 22 employees, ~$68k/month in card transactions. Currently on Genius POS — "works okay, nothing special." Can't see sales across both locations in real-time. Asked about passing fees to customers. Owner is hands-on; staff resistant to change. Month-to-month, no ETF.</p>
+</div>
+
+<!-- Question trigger — click to reveal -->
+<div class="q-trigger" id="q-trigger" onclick="toggleQuestions()">
+  <span class="q-trigger-label">Discussion questions</span>
+  <span class="q-trigger-hint" id="hint">
+    Click to reveal
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </span>
+</div>
+
+<div class="q-content" id="q-content">
+  <div class="q-wrap">
+    <div class="q-progress" id="q-progress"></div>
+    <p class="q-label">Question <span id="q-num">1</span> of <span id="q-total">4</span></p>
+    <p class="q-text" id="q-text"></p>
+    <div class="q-nav">
+      <button class="q-btn ghost" id="q-prev" onclick="prevQ()">&#8592; Back</button>
+      <span class="q-count" id="q-count"></span>
+      <button class="q-btn" id="q-next" onclick="nextQ()">Next &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Resource cards — always visible -->
+<div class="res-grid">
+  <div class="rcard">
+    <div class="rcard-top">
+      <div class="rcard-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5D70AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <p class="rcard-label">Discovery Tool</p>
+        <p class="rcard-title">Customer Profile</p>
+      </div>
+    </div>
+    <p class="rcard-desc">Capture merchant needs, concerns, and priorities. Use during this activity.</p>
+    <a class="rcard-btn" href="https://propelrpay1.sharepoint.com/:b:/s/Training/IQD2iO87zIpUToGCLhbf_tLbAYKdkWI9deqEFB_1GFwYQ4E?e=R1fY5Y" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Customer Profile
+    </a>
+  </div>
+
+  <div class="rcard">
+    <div class="rcard-top">
+      <div class="rcard-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5D70AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div>
+        <p class="rcard-label">Field Tool</p>
+        <p class="rcard-title">Merchant Checklist</p>
+      </div>
+    </div>
+    <p class="rcard-desc">Your discovery conversation guide for every merchant visit.</p>
+    <a class="rcard-btn" href="https://propelrpay1.sharepoint.com/:b:/s/Training/IQBwwMwrPnGJQo1oNgM2hWG-AYfOAo0w9d5H0xM3n_TPWb8?e=Lovc0W" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Merchant Checklist
+    </a>
+  </div>
+</div>
+
+<script>
+var questions = [
+  "Which solution would you recommend — and why?",
+  "What's your opening pitch to get them interested in dual pricing?",
+  "What's the biggest switching friction — and how do you handle it?",
+  "What discovery questions would you still need to ask?"
+];
+var qIdx = 0;
+
+function renderProgress() {
+  var prog = document.getElementById('q-progress');
+  var html = "";
+  for (var i = 0; i < questions.length; i++) {
+    var cls = i < qIdx ? "done" : (i === qIdx ? "current" : "");
+    html += '<div class="q-dot ' + cls + '"></div>';
+  }
+  prog.innerHTML = html;
+}
+
+function renderQuestion() {
+  document.getElementById('q-num').textContent = qIdx + 1;
+  document.getElementById('q-total').textContent = questions.length;
+  document.getElementById('q-text').textContent = questions[qIdx];
+  document.getElementById('q-prev').disabled = qIdx === 0;
+  var nextBtn = document.getElementById('q-next');
+  nextBtn.innerHTML = qIdx === questions.length - 1 ? "Done &#10003;" : "Next &#8594;";
+  renderProgress();
+}
+
+function nextQ() {
+  if (qIdx < questions.length - 1) {
+    qIdx++;
+    renderQuestion();
+  }
+}
+
+function prevQ() {
+  if (qIdx > 0) {
+    qIdx--;
+    renderQuestion();
+  }
+}
+
+function toggleQuestions() {
+  var content = document.getElementById('q-content');
+  var trigger = document.getElementById('q-trigger');
+  var hint = document.getElementById('hint');
+  var isOpen = content.classList.contains('open');
+
+  content.classList.toggle('open', !isOpen);
+  trigger.classList.toggle('open', !isOpen);
+  hint.innerHTML = isOpen
+    ? 'Click to reveal <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'
+    : 'Hide <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  if (!isOpen) renderQuestion();
+}
+</script>
+</body>
+</html>
