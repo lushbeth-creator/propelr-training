@@ -12,7 +12,7 @@
     background: transparent;
     font-family: 'Inter', sans-serif;
     color: #1a1a2e;
-    padding: 1.2rem 1rem;
+    padding: .6rem .75rem;
   }
 
   .container { width: 100%; }
@@ -30,7 +30,7 @@
     background: #fff;
     border: none;
     border-right: 1px solid #e0e6ff;
-    padding: .75rem .5rem;
+    padding: .7rem .5rem;
     font-family: 'Inter', sans-serif;
     font-size: .82rem;
     font-weight: 600;
@@ -59,7 +59,7 @@
     border: 1.5px solid #e0e6ff;
     border-top: none;
     border-radius: 0 0 10px 10px;
-    padding: 1.6rem;
+    padding: 1.3rem 1.4rem;
     animation: fadeIn .2s ease;
   }
   .pane.show { display: block; }
@@ -73,145 +73,56 @@
     margin-bottom: .25rem;
   }
   .pane-title {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #1a1a2e;
-    margin-bottom: .7rem;
+    margin-bottom: .6rem;
   }
   .pane-desc {
-    font-size: .875rem;
+    font-size: .85rem;
     color: #444;
-    line-height: 1.65;
-    margin-bottom: 1.1rem;
-    padding-bottom: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: .9rem;
+    padding-bottom: .9rem;
     border-bottom: 1.5px solid #DAF3EF;
   }
 
   .pane-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: .9rem;
-    margin-bottom: 1rem;
+    gap: .8rem;
+    margin-bottom: .8rem;
   }
   .pane-box {
     background: #f8f9ff;
     border-radius: 8px;
-    padding: .9rem 1rem;
+    padding: .8rem .9rem;
   }
   .pane-box h4 {
-    font-size: .72rem;
+    font-size: .7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .09em;
     color: #5D70AE;
-    margin-bottom: .4rem;
+    margin-bottom: .35rem;
   }
   .pane-box p {
-    font-size: .835rem;
+    font-size: .82rem;
     color: #444;
-    line-height: 1.55;
+    line-height: 1.5;
   }
   .pane-box ul {
     padding-left: 1.1rem;
-    font-size: .835rem;
+    font-size: .82rem;
     color: #444;
-    line-height: 1.8;
+    line-height: 1.75;
   }
   .pane-best {
-    font-size: .82rem;
+    font-size: .8rem;
     color: #666;
-    margin-top: .2rem;
+    margin-top: 0;
   }
   .pane-best strong { color: #1a1a2e; }
-
-  /* NER Calculator */
-  .calc {
-    background: #f3f6ff;
-    border-radius: 10px;
-    padding: 1.2rem 1.4rem;
-    margin-top: 1.4rem;
-  }
-  .calc-title {
-    font-size: .78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    color: #5D70AE;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-  }
-  .calc-title svg { flex-shrink: 0; }
-  .calc-row {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    margin-bottom: .7rem;
-  }
-  .calc-row label {
-    font-size: .835rem;
-    color: #444;
-    font-weight: 500;
-    min-width: 160px;
-  }
-  .calc-row input {
-    flex: 1;
-    height: 36px;
-    border: 1.5px solid #d0d8f0;
-    border-radius: 7px;
-    padding: 0 .75rem;
-    font-family: 'Inter', sans-serif;
-    font-size: .875rem;
-    color: #1a1a2e;
-    background: #fff;
-    transition: border-color .15s;
-  }
-  .calc-row input:focus { outline: none; border-color: #5D70AE; }
-
-  .calc-result {
-    margin-top: .8rem;
-    padding: 1rem 1.1rem;
-    background: #fff;
-    border-radius: 8px;
-    border: 1.5px solid #e0e6ff;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    animation: fadeIn .2s ease;
-  }
-  .ner-num {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #1a1a2e;
-    line-height: 1;
-  }
-  .ner-meta { flex: 1; min-width: 120px; }
-  .ner-label {
-    font-size: .75rem;
-    color: #999;
-    line-height: 1.4;
-  }
-  .ner-verdict {
-    font-size: .78rem;
-    font-weight: 700;
-    padding: .3rem .7rem;
-    border-radius: 5px;
-    white-space: nowrap;
-  }
-  .v-good { background: #e6fbf7; color: #1a6b5c; }
-  .v-ok   { background: #fff9e6; color: #7a5500; }
-  .v-high { background: #fdecea; color: #9b2020; }
-  .ner-note {
-    font-size: .8rem;
-    color: #555;
-    line-height: 1.5;
-    width: 100%;
-    margin-top: .3rem;
-    padding-top: .3rem;
-    border-top: 1px solid #f0f0f0;
-  }
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
@@ -220,9 +131,6 @@
 
   @media (max-width: 520px) {
     .pane-grid { grid-template-columns: 1fr; }
-    .calc-row { flex-direction: column; align-items: flex-start; }
-    .calc-row label { min-width: unset; }
-    .calc-row input { width: 100%; }
     .tab .tab-sub { display: none; }
   }
 </style>
@@ -305,32 +213,6 @@
     <p class="pane-best"><strong>Best for:</strong> Credit-heavy card mix, merchants wanting full fee elimination.</p>
   </div>
 
-  <!-- NER Calculator -->
-  <div class="calc">
-    <p class="calc-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D70AE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-      Net Effective Rate Calculator
-    </p>
-    <div class="calc-row">
-      <label for="fees">Total fees charged ($)</label>
-      <input type="number" id="fees" placeholder="e.g. 1250" oninput="calcNER()">
-    </div>
-    <div class="calc-row">
-      <label for="vol">Total processing volume ($)</label>
-      <input type="number" id="vol" placeholder="e.g. 65000" oninput="calcNER()">
-    </div>
-    <div class="calc-result" id="ner-result" style="display:none">
-      <div>
-        <div class="ner-num" id="ner-val">—</div>
-        <div class="ner-label">Net Effective Rate<br>Total Fees ÷ Total Volume</div>
-      </div>
-      <div class="ner-meta">
-        <div class="ner-verdict" id="ner-verdict"></div>
-      </div>
-      <div class="ner-note" id="ner-note"></div>
-    </div>
-  </div>
-
 </div>
 
 <script>
@@ -340,31 +222,6 @@ function showPane(id, btn) {
   document.getElementById('pane-' + id).classList.add('show');
   btn.classList.add('active');
   btn.setAttribute('aria-selected', 'true');
-}
-
-function calcNER() {
-  var f   = parseFloat(document.getElementById('fees').value);
-  var v   = parseFloat(document.getElementById('vol').value);
-  var res = document.getElementById('ner-result');
-  if (!f || !v || v === 0) { res.style.display = 'none'; return; }
-  var ner = (f / v) * 100;
-  res.style.display = 'flex';
-  document.getElementById('ner-val').textContent = ner.toFixed(2) + '%';
-  var verd = document.getElementById('ner-verdict');
-  var note = document.getElementById('ner-note');
-  if (ner < 2) {
-    verd.className = 'ner-verdict v-good';
-    verd.textContent = 'Competitive';
-    note.textContent = 'Under 2% — solid. Lead with transparency and long-term relationship value.';
-  } else if (ner <= 2.5) {
-    verd.className = 'ner-verdict v-ok';
-    verd.textContent = 'Improvable';
-    note.textContent = '2–2.5% — there\'s room to optimize. Ask for an itemized IC+ statement to find where costs are hiding.';
-  } else {
-    verd.className = 'ner-verdict v-high';
-    verd.textContent = 'Strong candidate';
-    note.textContent = 'Over 2.5% — a cost-offset conversation (dual pricing or surcharge) is worth having. Run a side-by-side proposal.';
-  }
 }
 </script>
 </body>
