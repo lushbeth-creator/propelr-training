@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — Statement Walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a2e;
+    padding: .6rem .75rem;
+  }
+
+  .wrap { width: 100%; }
+
+  /* Statement card */
+  .statement {
+    background: #fff;
+    border: 1.5px solid #ccd0dc;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: .9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .statement-meta {
+    background: #fff;
+    padding: .6rem 1rem .5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .statement-period {
+    font-size: .72rem;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .not-a-bill {
+    text-align: right;
+    font-size: .7rem;
+  }
+  .not-a-bill .nab-title {
+    display: block;
+    font-weight: 700;
+    color: #c0392b;
+    font-size: .75rem;
+  }
+  .not-a-bill .nab-sub {
+    color: #444;
+    font-size: .68rem;
+  }
+  .statement-divider {
+    height: 5px;
+    background: linear-gradient(to bottom, #3a5070, #5a7090);
+    margin: 0;
+  }
+  .statement-body {
+    padding: .75rem 1rem .4rem;
+    background: #f5f5f5;
+  }
+  .statement-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: .15rem;
+  }
+  .statement-subtitle {
+    font-size: .72rem;
+    color: #555;
+    margin-bottom: .7rem;
+  }
+  .statement-row {
+    display: flex;
+    align-items: center;
+    padding: .45rem .7rem;
+    font-size: .85rem;
+    margin-bottom: 2px;
+  }
+  .s-page {
+    font-size: .62rem;
+    color: #666;
+    font-weight: 500;
+    min-width: 44px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .s-label { flex: 1; font-weight: 700; color: #1a1a2e; font-size: .88rem; }
+  .s-val { font-weight: 600; color: #1a1a2e; font-size: .88rem; }
+
+  .row-green  { background: #dff2df; }
+  .row-pink   { background: #f7e5eb; }
+  .row-purple { background: #ede8f5; }
+  .row-blue   { background: #dde8f5; }
+
+  .statement-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .55rem .7rem .6rem;
+    margin-top: 2px;
+    border-top: 2px solid #aaa;
+  }
+  .statement-total .s-label { font-size: .95rem; font-weight: 800; }
+  .statement-total .s-val   { font-size: .95rem; font-weight: 800; }
+
+  /* Formula box */
+  .formula {
+    background: #f3f6ff;
+    border-radius: 8px;
+    padding: .85rem 1rem;
+    margin-bottom: .9rem;
+    font-size: .82rem;
+    color: #444;
+    line-height: 1.6;
+  }
+  .formula strong { color: #5D70AE; }
+  .formula .step {
+    display: block;
+    margin-top: .3rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .82rem;
+    color: #1a1a2e;
+  }
+
+  .reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: #5D70AE;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: .55rem 1.1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+    margin-top: .3rem;
+  }
+  .reveal-btn:hover { background: #4a5d9a; }
+
+  .answer-box {
+    display: none;
+    margin-top: .8rem;
+    padding: .9rem 1rem;
+    background: #e6fbf7;
+    border-radius: 8px;
+    border-left: 3px solid #59A398;
+    animation: fadeIn .25s ease;
+  }
+  .answer-box.show { display: block; }
+  .answer-box .a-label {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #1a6b5c;
+    margin-bottom: .35rem;
+  }
+  .answer-box .a-val {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: .3rem;
+  }
+  .answer-box .a-check {
+    font-size: .78rem;
+    color: #1a6b5c;
+    margin-top: .4rem;
+    padding-top: .4rem;
+    border-top: 1px solid #c5ede7;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="statement">
+    <div class="statement-meta">
+      <div>
+        <div class="statement-period">Statement Period: 12/01/21 – 12/31/21</div>
+      </div>
+      <div class="not-a-bill">
+        <span class="nab-title">THIS IS NOT A BILL</span>
+        <span class="nab-sub">Merchant Number: 958245549885</span>
+      </div>
+    </div>
+    <div class="statement-divider"></div>
+    <div class="statement-body">
+      <div class="statement-title">Account Summary</div>
+      <div class="statement-subtitle">An overview of your account activity for the statement period.</div>
+
+      <div class="statement-row row-green">
+        <span class="s-page">Page 2</span>
+        <span class="s-label">Total Amount Submitted</span>
+        <span class="s-val">$12,753.33</span>
+      </div>
+      <div class="statement-row row-pink">
+        <span class="s-page">Page 3</span>
+        <span class="s-label">Chargebacks/Reversals</span>
+        <span class="s-val">0.00</span>
+      </div>
+      <div class="statement-row row-purple">
+        <span class="s-page">Page 4</span>
+        <span class="s-label">Adjustments</span>
+        <span class="s-val">0.00</span>
+      </div>
+      <div class="statement-row row-blue">
+        <span class="s-page">Page 4</span>
+        <span class="s-label">Fees</span>
+        <span class="s-val">-$227.89</span>
+      </div>
+
+      <div class="statement-total">
+        <span class="s-label">Total Amount Processed</span>
+        <span class="s-val">$12,525.44</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula">
+    <strong>Net Effective Rate (NER)</strong> = Total Fees ÷ Total Amount Processed
+    <span class="step">Use "Total Amount Processed," not "Total Amount Submitted" — that's after chargebacks and adjustments are removed.</span>
+  </div>
+
+  <button class="reveal-btn" onclick="revealAnswer()">Show Answer</button>
+
+  <div class="answer-box" id="answer-box">
+    <p class="a-label">Answer</p>
+    <p class="a-val">$227.89 ÷ $12,525.44 = 1.79% NER</p>
+    <p class="a-check">Under 2% — this is a competitive rate. Lead with transparency and long-term relationship value rather than a hard rate pitch.</p>
+  </div>
+
+</div>
+
+<script>
+function revealAnswer() {
+  document.getElementById('answer-box').classList.add('show');
+  document.querySelector('.reveal-btn').style.display = 'none';
+}
+</script>
+</body>
+</html>
