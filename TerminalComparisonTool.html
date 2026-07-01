@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Terminal Comparison Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+/* ===== Outer wrapper ===== */
+.outer{
+  border:1px solid #d8dce8;
+  border-radius:8px;
+  overflow:hidden;
+  background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%);
+}
+.panel{padding:22px 24px}
+
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#59A398;margin-bottom:6px}
+.ptitle{font-family:'Inter',sans-serif;font-weight:700;font-size:22px;color:#1B2F5B;margin-bottom:10px}
+.pbody{font-size:13px;color:#444;line-height:1.65;max-width:720px;margin-bottom:16px}
+
+/* ===== How to use ===== */
+.howto{background:#f3f6ff;border:1px solid #A6B3D5;border-radius:8px;padding:14px 18px;margin-bottom:20px}
+.howto-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5D70AE;margin-bottom:8px}
+.howto ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 20px}
+.howto li{font-size:12px;color:#444;line-height:1.55;padding-left:14px;position:relative}
+.howto li::before{content:"\203A";position:absolute;left:0;color:#59A398;font-weight:700}
+.howto .note{margin-top:10px;padding-top:10px;border-top:1px solid #A6B3D5;font-size:11.5px;color:#5D70AE;font-weight:600}
+
+/* ===== Filter bar ===== */
+.filterbar{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin-bottom:12px}
+.filter-group{display:flex;flex-direction:column;gap:5px}
+.filter-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#5D70AE}
+.filter-select{
+  border:1px solid #d8dce8;border-radius:6px;padding:.5rem .6rem;
+  font-family:'Inter',sans-serif;font-size:12.5px;color:#333;background:#ffffff;
+  min-width:150px;cursor:pointer;
+}
+.filter-select:focus{outline:2px solid #5D70AE;outline-offset:1px}
+.clear-btn{
+  background:#59A398;color:#fff;border:none;border-radius:7px;padding:.55rem 1.1rem;
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .15s;
+  height:36px;
+}
+.clear-btn:hover{background:#5D70AE}
+
+.result-count{font-size:12px;color:#888;margin-bottom:10px}
+
+/* ===== Table ===== */
+.table-wrap{overflow-x:auto;border:1px solid #d8dce8;border-radius:8px;background:#ffffff}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:760px}
+thead th{
+  background:#f3f6ff;color:#5D70AE;text-transform:uppercase;font-size:10px;letter-spacing:.05em;
+  padding:10px 12px;text-align:left;border-bottom:1px solid #d8dce8;white-space:nowrap;
+}
+tbody td{padding:10px 12px;border-bottom:1px solid #eef0f8;vertical-align:top}
+tbody tr.device-row{cursor:pointer;transition:background .1s}
+tbody tr.device-row:hover{background:#f8f9ff}
+tbody tr.device-row.open{background:#f3f6ff}
+.term-name{font-weight:700;color:#1B2F5B;font-size:13px}
+
+.brand-pill{
+  display:inline-block;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:10px;
+  background:#f3f6ff;color:#5D70AE;border:1px solid #A6B3D5;white-space:nowrap;
+}
+.chip{
+  display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:10px;
+  background:#f3f6ff;color:#5D70AE;border:1px solid #A6B3D5;margin:2px 4px 2px 0;
+}
+.chip-empty{font-size:11.5px;color:#aaa}
+
+.expand-cell{width:30px;text-align:center}
+.expand-btn{
+  width:22px;height:22px;border-radius:50%;background:#f3f6ff;border:1px solid #A6B3D5;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:background .15s,transform .2s,border-color .15s;
+}
+.expand-btn svg{stroke:#5D70AE;transition:stroke .15s;display:block}
+tr.device-row.open .expand-btn{background:#5D70AE;border-color:#5D70AE;transform:rotate(45deg)}
+tr.device-row.open .expand-btn svg{stroke:#ffffff}
+
+tr.detail-row td{background:#f8f9ff;padding:16px 20px 18px 20px;border-bottom:1px solid #d8dce8}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px 20px}
+.detail-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5D70AE;margin-bottom:3px}
+.detail-value{font-size:12px;color:#333;line-height:1.5}
+.detail-notes{margin-top:14px;padding-top:12px;border-top:1px solid #d8dce8;font-size:12px;color:#444;line-height:1.6}
+.detail-notes .detail-label{margin-bottom:4px}
+
+.no-results{padding:28px;text-align:center;font-size:13px;color:#888}
+
+.results-scroll{
+  max-height:460px;overflow-y:auto;padding-right:6px;margin-right:-6px;
+}
+.results-scroll::-webkit-scrollbar{width:8px}
+.results-scroll::-webkit-scrollbar-track{background:transparent}
+.results-scroll::-webkit-scrollbar-thumb{background:#A6B3D5;border-radius:4px}
+.results-scroll::-webkit-scrollbar-thumb:hover{background:#5D70AE}
+
+/* ===== Brand sections (accordion) ===== */
+.brand-section{border:1px solid #d8dce8;border-radius:8px;background:#ffffff;margin-bottom:12px;overflow:hidden}
+.brand-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 16px;cursor:pointer;background:#ffffff;transition:background .15s;
+}
+.brand-header:hover{background:#f8f9ff}
+.brand-header.open{background:#f3f6ff}
+.brand-header-left{display:flex;align-items:center;gap:10px}
+.brand-name{font-family:'Inter',sans-serif;font-weight:700;font-size:14.5px;color:#1B2F5B}
+.brand-count{font-size:11.5px;color:#888;font-weight:500}
+.brand-toggle{
+  width:22px;height:22px;border-radius:50%;background:#f3f6ff;border:1px solid #A6B3D5;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .15s,transform .2s,border-color .15s;
+}
+.brand-toggle svg{stroke:#5D70AE;transition:stroke .15s;display:block}
+.brand-header.open .brand-toggle{background:#5D70AE;border-color:#5D70AE;transform:rotate(45deg)}
+.brand-header.open .brand-toggle svg{stroke:#ffffff}
+.brand-table-wrap{border-top:1px solid #d8dce8;overflow-x:auto}
+
+@media (max-width:640px){
+  .panel{padding:16px 18px}
+  .filter-select{min-width:120px}
+}
+</style>
+</head>
+<body>
+
+<div class="outer">
+  <div class="panel">
+
+    <p class="eyebrow">Hardware Reference</p>
+    <p class="ptitle">Terminal Comparison Tool</p>
+    <p class="pbody">Compare devices across CardPointe, Clover, PAX, SwipeSimple, DejaVoo, and Valor PayTech. Filter by brand, type, connectivity, or payment capability, then click a terminal to see full specs.</p>
+
+    <div class="howto">
+      <p class="howto-label">How to use</p>
+      <ul>
+        <li>Use the filters below to narrow the list to what fits your merchant.</li>
+        <li>Click the <strong>+</strong> next to any terminal to see full specs.</li>
+        <li>Click <strong>Clear Filters</strong> to reset and view the entire list.</li>
+      </ul>
+      <p class="note">Pulled from the Hardware Matrix. Confirm current availability with your partner manager before quoting a device to a merchant.</p>
+    </div>
+
+    <div class="filterbar">
+      <div class="filter-group">
+        <label class="filter-label">Brand</label>
+        <select class="filter-select" id="f-brand"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Type</label>
+        <select class="filter-select" id="f-type"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Communication</label>
+        <select class="filter-select" id="f-comm"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Payment Options</label>
+        <select class="filter-select" id="f-pay"><option value="">All</option></select>
+      </div>
+      <button class="clear-btn" id="clearBtn">Clear Filters</button>
+    </div>
+
+    <p class="result-count" id="resultCount"></p>
+
+    <div class="results-scroll">
+      <div id="brandSections"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var DEVICES = [{"brand":"CardPointe","device":"Virtual Terminal","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT","type":"No Device","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":[],"multiMid":"Y (Copilot Linking)","pay":["Surcharge"],"sig":"N","p2pe":"Y With Hardware","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Stratus Ticket when Gateway Only, Copilot Boarding/Order"},{"brand":"CardPointe","device":"Desk 3500","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"Standalone","type":"Countertop","status":"End of Sale","pinEntry":"Desk 1500","receiptPrinter":"Integrated","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless","Surcharge"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Desk 5000","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"Standalone","type":"Countertop","status":"End of Sale","pinEntry":"Desk 1500","receiptPrinter":"Integrated","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless","Surcharge"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Desk 1500","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"PinPad","type":"Countertop","status":"End of Sale","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless","Surcharge"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Desk 2600","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"Desk 1600","receiptPrinter":"Integrated","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless","Surcharge"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Desk1600","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"PinPad","type":"Countertop","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless","Surcharge"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Integrated Mini","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"API Integrated","type":"WiFi/Ethernet/LTE","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"Y","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Integrated Flex","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"API Integrated","type":"WiFi/LTE","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","4G"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"Y","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Integrated Compact","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"API Integrated","type":"WiFi/LTE","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","4G"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"Y","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Integrated Pocket","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"API Integrated","type":"WiFi/LTE","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","4G"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"Y","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Lane3000","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT or API Integrated","type":"Countertop","status":"End of Sale","pinEntry":"integrated","receiptPrinter":"None","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Lane 5000","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT or API Integrated","type":"Countertop","status":"End of Sale","pinEntry":"integrated","receiptPrinter":"None","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Lane 3600","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT or API Integrated","type":"Countertop","status":"Available","pinEntry":"integrated","receiptPrinter":"None","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Lane 7000","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT or API Integrated","type":"Countertop","status":"Available","pinEntry":"integrated","receiptPrinter":"None","ebt":"N/A","comm":["Ethernet"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"Y","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"iSMP4","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT or API Integrated","type":"Wireless","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":["WiFi"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Link 2500","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"VT or API Integrated","type":"Wireless","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":["WiFi"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"N","p2pe":"Y","notes":"Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"VP3300","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"Mobile","type":"Wireless","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":["Bluetooth"],"multiMid":"N","pay":["EMV","Contactless"],"sig":"N","p2pe":"Y","notes":"Not provisioned to specific MIDs.  Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe.  *Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"IDTECH Augusta","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"USB VT Peripheral","type":"Countertop","status":"End of Sale","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":[],"multiMid":"N","pay":["Surcharge"],"sig":"N","p2pe":"Y","notes":"Not provisioned to specific MIDs. Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe. Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"IDTECH VP3350","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"USB VT Peripheral","type":"Countertop","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":[],"multiMid":"N","pay":["Surcharge"],"sig":"N","p2pe":"Y","notes":"Not provisioned to specific MIDs. Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe. Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"CardPointe","device":"Magtek SREDKey","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Rapidconnect North","peripheral":"USB VT Peripheral","type":"Countertop","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":[],"multiMid":"N","pay":["Surcharge"],"sig":"N","p2pe":"Y","notes":"Not provisioned to specific MIDs. Submitted in Copilot as gateway-only when boarded to Fiserv or Paysafe. Surcharge and ACH functionality unavailable when Gateway-only","soldBy":"CardConnect","orderProcess":"Copilot Order"},{"brand":"Clover","device":"Virtual Terminal","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"VT","type":"VT","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":[],"multiMid":"Y (with Owner Email)","pay":["Surcharge","Cash Discount"],"sig":"N","p2pe":"Hardware-dependent","notes":"","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Station Duo","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"customer-facing screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Station Solo","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"None","receiptPrinter":"Integrated","ebt":"N","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"No NFC","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Mini (Gen 3)","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Flex 4","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Wireless","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Flex Pocket","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Wireless","status":"Available","pinEntry":"On Screen","receiptPrinter":"None","ebt":"Y","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"No built-in receipt printer","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Compact","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"connected Compact","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"N","p2pe":"Y","notes":"Optional swivel or connect to another compact for PIN entry","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"Clover","device":"Go","platform":"Fiserv, CardConnect, Paysafe","network":"FirstData Nashville, FirstData Omaha","peripheral":"Standalone","type":"Wireless","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N","comm":["Bluetooth"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"N","p2pe":"Y","notes":"Mobile devices aren't provisioned to specific MIDs","soldBy":"CardConnect, Paysafe","orderProcess":"Fiserv: Stratus Ticket CC: CoPilot Order Paysafe: Addendum"},{"brand":"PAX","device":"A920 Pro","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS, Vantiv, Rapid Connect","peripheral":"Standalone","type":"Wireless","status":"Out of Stock","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","4G","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"Data Sheet Compatible with Swipe Simple","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"PAX","device":"E600 4G","platform":"Woodforest, Paysafe, Worldpay","network":"TSYS, Vantiv, Rapid Connect","peripheral":"Standalone","type":"Unspecified","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","Ethernet","4G","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"PAX","device":"A80S","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS, Vantiv, Rapid Connect","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"A35","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G","Dial","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"Data Sheet Compatible with Swipe Simple","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"SwipeSimple","device":"B350","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS","peripheral":"Mobile","type":"Wireless","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":["Bluetooth"],"multiMid":"N","pay":["EMV","Contactless","Cash Discount"],"sig":"N","p2pe":"Y","notes":"Data Sheet Compatible with Swipe Simple","soldBy":"CardFlight","orderProcess":"Stratus Ticket"},{"brand":"DejaVoo","device":"P1","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"*Non-compliant programming (i.e., surcharging debit or adjusting-up on cash discount) will not be enabled.","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"DejaVoo","device":"P3","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS","peripheral":"Standalone","type":"Wireless","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","4G","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"DejaVoo","device":"P5","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS","peripheral":"Standalone","type":"Wireless","status":"Available","pinEntry":"On Screen","receiptPrinter":"None","ebt":"Y","comm":["WiFi","Ethernet","4G","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"DejaVoo","device":"QD2","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS","peripheral":"Standalone","type":"Wireless","status":"Unavailable","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","4G","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"DejaVoo","device":"QD4","platform":"Fiserv, Paysafe, Woodforest, Worldpay","network":"TSYS","peripheral":"Standalone","type":"Countertop","status":"Unavailable","pinEntry":"QD5","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet","Bluetooth"],"multiMid":"Y","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"Y","notes":"","soldBy":"POS Portal","orderProcess":"Stratus Ticket"},{"brand":"Valor PayTech","device":"Virtual Terminal","platform":"Fiserv, CardConnect, Woodforest, Paysafe, Worldpay","network":"TSYS, Worldpay, FirstData Nashville","peripheral":"VT","type":"No Device","status":"Available","pinEntry":"None","receiptPrinter":"None","ebt":"N/A","comm":[],"multiMid":"Y","pay":["EMV","Surcharge","Cash Discount"],"sig":"N","p2pe":"N","notes":"Fiserv accounts require datawire provisioning.","soldBy":"Propelr","orderProcess":"Stratus Ticket"},{"brand":"Valor PayTech","device":"VP800","platform":"Fiserv, CardConnect, Woodforest, Paysafe, Worldpay","network":"TSYS, Worldpay, FirstData Nashville","peripheral":"Standalone","type":"Standalone","status":"Available","pinEntry":"Customer-facing Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","4G","Bluetooth"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"N","notes":"Fiserv accounts require datawire provisioning.","soldBy":"Propelr","orderProcess":"Stratus Ticket"},{"brand":"Valor PayTech","device":"VP550","platform":"Fiserv, CardConnect, Woodforest, Paysafe, Worldpay","network":"TSYS, Worldpay, FirstData Nashville","peripheral":"Standalone","type":"Wireless","status":"Available","pinEntry":"On Screen","receiptPrinter":"Integrated","ebt":"N/A","comm":["WiFi","4G","Bluetooth"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"N","notes":"Fiserv accounts require datawire provisioning.","soldBy":"Propelr","orderProcess":"Stratus Ticket"},{"brand":"Valor PayTech","device":"VP100","platform":"Fiserv, CardConnect, Woodforest, Paysafe, Worldpay","network":"TSYS, Worldpay, FirstData Nashville","peripheral":"Standalone","type":"Countertop","status":"Available","pinEntry":"On Screen or VP300","receiptPrinter":"Integrated","ebt":"Y","comm":["WiFi","Ethernet"],"multiMid":"N","pay":["EMV","Contactless","Surcharge","Cash Discount"],"sig":"Y","p2pe":"N","notes":"Fiserv accounts require datawire provisioning.","soldBy":"Propelr","orderProcess":"Stratus Ticket"}];
+
+var openKeys = new Set();
+var openBrands = new Set();
+var filters = { brand:"", type:"", comm:"", pay:"" };
+
+function keyOf(d, i) { return d.brand + "::" + d.device + "::" + i; }
+
+function uniqueSorted(arr) {
+  return Array.from(new Set(arr)).sort();
+}
+
+function populateFilters() {
+  var brands = uniqueSorted(DEVICES.map(function(d){ return d.brand; }));
+  var types = uniqueSorted(DEVICES.map(function(d){ return d.type; }));
+  var comms = uniqueSorted([].concat.apply([], DEVICES.map(function(d){ return d.comm; })));
+  var pays = uniqueSorted([].concat.apply([], DEVICES.map(function(d){ return d.pay; })));
+
+  fillSelect("f-brand", brands);
+  fillSelect("f-type", types);
+  fillSelect("f-comm", comms);
+  fillSelect("f-pay", pays);
+}
+
+function fillSelect(id, values) {
+  var sel = document.getElementById(id);
+  values.forEach(function(v) {
+    var opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = v;
+    sel.appendChild(opt);
+  });
+}
+
+function chipList(arr) {
+  if (!arr || arr.length === 0) return '<span class="chip-empty">None</span>';
+  return arr.map(function(v) { return '<span class="chip">' + v + '</span>'; }).join('');
+}
+
+function detailRowHtml(d) {
+  var fields = [
+    ["Status", d.status],
+    ["Platform(s)", d.platform || "N/A"],
+    ["Front-End Network", d.network || "N/A"],
+    ["Peripheral / Standalone", d.peripheral || "N/A"],
+    ["Pin Entry", d.pinEntry],
+    ["Receipt Printer", d.receiptPrinter],
+    ["EBT", d.ebt],
+    ["Multi-Mid", d.multiMid],
+    ["Signature Capture", d.sig],
+    ["P2PE", d.p2pe],
+    ["Sold By", d.soldBy || "N/A"],
+    ["Order Process", d.orderProcess || "N/A"]
+  ];
+  var grid = fields.map(function(f) {
+    return '<div><p class="detail-label">' + f[0] + '</p><p class="detail-value">' + f[1] + '</p></div>';
+  }).join('');
+  var notes = d.notes ?
+    '<div class="detail-notes"><p class="detail-label">Notes / Features</p><p class="detail-value">' + d.notes + '</p></div>' : '';
+  return '<div class="detail-grid">' + grid + '</div>' + notes;
+}
+
+function hasActiveFilters() {
+  return !!(filters.brand || filters.type || filters.comm || filters.pay);
+}
+
+function autoExpandForFilters() {
+  if (!hasActiveFilters()) { openBrands = new Set(); return; }
+  var matchedBrands = DEVICES.filter(matchesFilters).map(function(d){ return d.brand; });
+  openBrands = new Set(matchedBrands);
+}
+
+function matchesFilters(d) {
+  if (filters.brand && d.brand !== filters.brand) return false;
+  if (filters.type && d.type !== filters.type) return false;
+  if (filters.comm && d.comm.indexOf(filters.comm) === -1) return false;
+  if (filters.pay && d.pay.indexOf(filters.pay) === -1) return false;
+  return true;
+}
+
+function deviceRowsHtml(items) {
+  var html = '<table><thead><tr>' +
+    '<th class="expand-cell"></th><th>Terminal</th><th>Type</th><th>Communication</th><th>Payment Options</th>' +
+    '</tr></thead><tbody>';
+  items.forEach(function(o) {
+    var d = o.d, i = o.i;
+    var key = keyOf(d, i);
+    var isOpen = openKeys.has(key);
+    html += '<tr class="device-row' + (isOpen ? ' open' : '') + '" data-key="' + key + '">' +
+      '<td class="expand-cell"><span class="expand-btn"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span></td>' +
+      '<td class="term-name">' + d.device + '</td>' +
+      '<td>' + d.type + '</td>' +
+      '<td>' + chipList(d.comm) + '</td>' +
+      '<td>' + chipList(d.pay) + '</td>' +
+      '</tr>';
+    if (isOpen) {
+      html += '<tr class="detail-row"><td colspan="5">' + detailRowHtml(d) + '</td></tr>';
+    }
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function render() {
+  var container = document.getElementById("brandSections");
+  var filtered = DEVICES.map(function(d, i){ return {d:d, i:i}; }).filter(function(o){ return matchesFilters(o.d); });
+
+  document.getElementById("resultCount").textContent =
+    filtered.length + " of " + DEVICES.length + " terminals";
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="no-results">No terminals match these filters. Try clearing one or more filters.</div>';
+    return;
+  }
+
+  var byBrand = {};
+  var brandOrder = [];
+  filtered.forEach(function(o) {
+    var b = o.d.brand;
+    if (!byBrand[b]) { byBrand[b] = []; brandOrder.push(b); }
+    byBrand[b].push(o);
+  });
+
+  var html = "";
+  brandOrder.forEach(function(brand) {
+    var items = byBrand[brand];
+    var isOpen = openBrands.has(brand);
+    html += '<div class="brand-section">' +
+      '<div class="brand-header' + (isOpen ? ' open' : '') + '" data-brand="' + brand + '">' +
+        '<div class="brand-header-left"><span class="brand-name">' + brand + '</span>' +
+        '<span class="brand-count">' + items.length + (items.length === 1 ? ' terminal' : ' terminals') + '</span></div>' +
+        '<span class="brand-toggle"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>' +
+      '</div>';
+    if (isOpen) {
+      html += '<div class="brand-table-wrap">' + deviceRowsHtml(items) + '</div>';
+    }
+    html += '</div>';
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('.brand-header').forEach(function(hdr) {
+    hdr.addEventListener('click', function() {
+      var brand = hdr.getAttribute('data-brand');
+      if (openBrands.has(brand)) { openBrands.delete(brand); } else { openBrands.add(brand); }
+      render();
+    });
+  });
+
+  container.querySelectorAll('.device-row').forEach(function(row) {
+    row.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var key = row.getAttribute('data-key');
+      if (openKeys.has(key)) { openKeys.delete(key); } else { openKeys.add(key); }
+      render();
+    });
+  });
+}
+
+function bindFilters() {
+  ["brand","type","comm","pay"].forEach(function(name) {
+    document.getElementById("f-" + name).addEventListener("change", function(e) {
+      filters[name] = e.target.value;
+      autoExpandForFilters();
+      render();
+    });
+  });
+  document.getElementById("clearBtn").addEventListener("click", function() {
+    filters = { brand:"", type:"", comm:"", pay:"" };
+    ["f-brand","f-type","f-comm","f-pay"].forEach(function(id) {
+      document.getElementById(id).value = "";
+    });
+    openBrands = new Set();
+    render();
+  });
+}
+
+populateFilters();
+bindFilters();
+render();
+</script>
+</body>
+</html>
