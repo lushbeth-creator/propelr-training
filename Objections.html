@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Objections</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+/* ===== Outer wrapper ===== */
+.outer{
+  border:1px solid #d8dce8;
+  border-radius:8px;
+  overflow:hidden;
+  background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%);
+}
+
+/* ===== Module header ===== */
+.modhead{padding:20px 24px 16px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#59A398;margin-bottom:6px}
+.ptitle{font-family:'Inter',sans-serif;font-weight:700;font-size:20px;color:#1B2F5B}
+.headrule{border:none;border-top:1px solid #d8dce8}
+
+/* ===== Accordion ===== */
+.acc-item{border-top:1px solid #d8dce8}
+.acc-item:first-child{border-top:none}
+.acc-btn{
+  width:100%;
+  background:transparent;
+  border:none;
+  padding:16px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  cursor:pointer;
+  text-align:left;
+  transition:background .15s;
+}
+.acc-btn:hover{background:#f3f6ff}
+.acc-btn[aria-expanded="true"]{background:#f3f6ff}
+.acc-q{font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:#1B2F5B}
+.acc-icon{
+  width:24px;height:24px;border-radius:50%;
+  background:#f3f6ff;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:background .15s,border-color .15s,transform .2s;
+}
+.acc-icon svg{display:block;stroke:#5D70AE;transition:stroke .15s}
+.acc-btn[aria-expanded="true"] .acc-icon{background:#5D70AE;border-color:#5D70AE;transform:rotate(45deg)}
+.acc-btn[aria-expanded="true"] .acc-icon svg{stroke:#ffffff}
+
+.acc-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.acc-body.open{max-height:900px}
+.acc-inner{padding:0 24px 20px}
+.pbody{font-size:13px;color:#444;line-height:1.7;margin-bottom:14px;max-width:640px}
+.pbody strong{color:#1B2F5B;font-weight:700}
+
+.tipcard{background:#f3f6ff;padding:11px 13px;border-radius:6px;border:1px solid #A6B3D5;max-width:520px}
+.tiplabel{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5D70AE;margin-bottom:5px}
+.tipvalue{font-size:12.5px;color:#333;line-height:1.55}
+
+/* ===== Referral program callout ===== */
+.referral-box{background:#59A398;color:#ffffff;border-radius:6px;padding:16px 18px;margin-top:16px}
+.referral-eyebrow{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#DAF3EF;margin-bottom:8px}
+.referral-lead{font-family:'Inter',sans-serif;font-weight:700;font-size:14px;color:#ffffff}
+.referral-link{display:inline-block;font-size:12px;font-weight:700;color:#59A398;background:#ffffff;padding:7px 14px;border-radius:4px;text-decoration:none}
+.referral-link:hover{background:#e8edf8;color:#5D70AE}
+</style>
+</head>
+<body>
+
+<div class="outer">
+
+  <div class="modhead">
+    <p class="eyebrow">Objection Handling</p>
+    <p class="ptitle">Common pushback and how to respond</p>
+  </div>
+
+  <hr class="headrule">
+
+  <div class="acc-item">
+    <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+      <span class="acc-q">"What's your rate?"</span>
+      <div class="acc-icon">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+        </svg>
+      </div>
+    </button>
+    <div class="acc-body">
+      <div class="acc-inner">
+        <p class="pbody">Shift the conversation from rate to net effective rate (NER). <strong>Total Fees &divide; Total Volume = NER.</strong> Under 2% is competitive. Ask for their last three statements and run the math together: a bundled statement hides costs that IC+ exposes.</p>
+        <div class="tipcard"><p class="tiplabel">Key move</p><p class="tipvalue">Request the last three statements and calculate NER together</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+      <span class="acc-q">"I don't want to pass fees to my customers."</span>
+      <div class="acc-icon">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+        </svg>
+      </div>
+    </button>
+    <div class="acc-body">
+      <div class="acc-inner">
+        <p class="pbody">Validate the concern, then reframe: <strong>dual pricing isn't adding a fee, it's displaying two prices.</strong> Cash customers get a discount. Most merchants find customers adapt quickly, especially in retail and QSR where posted pricing is already the norm.</p>
+        <div class="tipcard"><p class="tiplabel">Key move</p><p class="tipvalue">Reframe as two posted prices, not an added fee</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+      <span class="acc-q">"I'm happy with my current processor."</span>
+      <div class="acc-icon">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+        </svg>
+      </div>
+    </button>
+    <div class="acc-body">
+      <div class="acc-inner">
+        <p class="pbody">That's great. <strong>Ask to see their last statement together.</strong> Most merchants on bundled pricing don't know their actual NER. A side-by-side comparison is usually the conversation that moves things forward.</p>
+        <div class="tipcard"><p class="tiplabel">Key move</p><p class="tipvalue">Offer a side-by-side statement comparison</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+      <span class="acc-q">"I just switched."</span>
+      <div class="acc-icon">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+        </svg>
+      </div>
+    </button>
+    <div class="acc-body">
+      <div class="acc-inner">
+        <p class="pbody">Acknowledge the timing and stay in front of them. <strong>Check in at the 90-day mark</strong>: that's when early frustrations surface and switching decisions restart. Keep the relationship warm and be the first call when they're ready to move.</p>
+        <div class="tipcard"><p class="tiplabel">Key move</p><p class="tipvalue">Set a 90-day follow-up reminder</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc-item">
+    <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+      <span class="acc-q">"My friend handles this for me."</span>
+      <div class="acc-icon">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+        </svg>
+      </div>
+    </button>
+    <div class="acc-body">
+      <div class="acc-inner">
+        <p class="pbody">Respect the relationship, don't try to displace it. Ask what the arrangement looks like: are they getting statements? Do they know their NER? <strong>Position yourself as a second set of eyes, not a competitor.</strong> If the friend is good, they'll say so. If they're not, you've planted a seed.</p>
+        <div class="tipcard"><p class="tiplabel">Key move</p><p class="tipvalue">Position as a second set of eyes, not a competitor</p></div>
+
+        <div class="referral-box">
+          <p class="referral-eyebrow">Bonus: turn this into a referral</p>
+          <p class="referral-lead" style="margin-bottom:12px;">Let's build Propelr together, one great hire at a time.</p>
+          <a class="referral-link" href="https://propelrpay1.sharepoint.com/sites/Employee-Portal/SitePages/Employee-Referral-Program.aspx" target="_blank" rel="noopener">Find out more &#8594;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function tog(btn) {
+  var exp = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!exp));
+  var body = btn.nextElementSibling;
+  if (exp) { body.classList.remove('open'); } else { body.classList.add('open'); }
+}
+</script>
+</body>
+</html>
