@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — Card Mix & Advanced Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.75rem;width:100%;position:relative}
+
+/* Outer wrapper */
+.tab-wrap{border:1px solid #d8dce8;border-radius:8px;overflow:hidden;background:linear-gradient(to bottom,#ffffff,#e8edf8);width:100%}
+
+/* Tab bar */
+.tab-bar{display:flex;border-bottom:1px solid #d8dce8}
+.tab{flex:1;padding:.7rem .5rem;text-align:center;cursor:pointer;background:#fff;border-right:1px solid #d8dce8;transition:background .15s}
+.tab:last-child{border-right:none}
+.tab .t-title{font-size:13.5px;font-weight:700;font-family:'Inter',sans-serif;color:#333;line-height:1.3}
+.tab .t-sub{font-size:10.5px;color:#999;margin-top:3px;font-weight:400}
+.tab.active{background:#5D70AE}
+.tab.active .t-title{color:#fff}
+.tab.active .t-sub{color:#c8d0ea}
+.tab:hover:not(.active){background:#f5f6fb}
+
+/* Content panel */
+.panel{display:none;padding:1.2rem 1.4rem 1rem}
+.panel.active{display:block}
+
+.panel-eyebrow{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#59A398;margin-bottom:6px}
+.panel-title{font-family:'Inter',sans-serif;font-size:20px;font-weight:700;color:#1a1a2e;margin-bottom:.6rem}
+.panel-body{font-size:13px;color:#444;line-height:1.7;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #d8dce8}
+
+/* Tip cards */
+.tip-grid{display:flex;gap:.8rem;margin-bottom:.9rem}
+.tip-card{flex:1;background:#f3f6ff;border-radius:6px;padding:.8rem 1rem;border:1px solid #c8d0e8;box-shadow:0 2px 6px rgba(93,112,174,.1)}
+.tip-card .tc-label{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5D70AE;margin-bottom:6px}
+.tip-card .tc-text{font-size:12.5px;color:#333;line-height:1.6}
+
+/* Savings bar */
+.savings-bar{display:flex;gap:.8rem;margin-bottom:1rem}
+.savings-pill{flex:1;border-radius:6px;padding:.8rem 1rem;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.savings-pill.l2{background:#DAF3EF;border:1px solid #a8ddd4}
+.savings-pill.l3{background:#e8f0fb;border:1px solid #c8d0e8}
+.savings-pill .sp-level{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#1B2F5B;margin-bottom:4px}
+.savings-pill .sp-savings{font-size:20px;font-weight:700;color:#59A398}
+.savings-pill.l3 .sp-savings{color:#5D70AE}
+.savings-pill .sp-note{font-size:11px;color:#555;margin-top:4px}
+
+/* New badge */
+.new-badge{display:inline-block;background:#59A398;color:#fff;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-left:8px;vertical-align:middle;position:relative;top:-2px}
+
+/* Best for */
+.best-for{display:flex;align-items:flex-start;gap:.45rem;border-top:1px solid #d8dce8;padding-top:.75rem}
+.best-for .warn-icon{flex-shrink:0;margin-top:1px}
+.best-for .warn-text{font-size:12.5px;color:#7a5500;line-height:1.55}
+.best-for .warn-text strong{color:#7a5500}
+
+/* CEDP timeline */
+.timeline{display:flex;gap:.7rem;margin-bottom:1rem}
+.tl-item{flex:1;border-radius:6px;padding:.75rem .9rem;background:#f3f6ff;border-left:3px solid #5D70AE;border-top:1px solid #c8d0e8;border-right:1px solid #c8d0e8;border-bottom:1px solid #c8d0e8;box-shadow:0 2px 6px rgba(93,112,174,.1)}
+.tl-item.green{background:#DAF3EF;border-left-color:#59A398;border-top-color:#a8ddd4;border-right-color:#a8ddd4;border-bottom-color:#a8ddd4}
+.tl-item.warn{background:#fff8e6;border-left-color:#e6a817;border-top-color:#f0d99a;border-right-color:#f0d99a;border-bottom-color:#f0d99a}
+.tl-item .tl-date{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#5D70AE;margin-bottom:4px}
+.tl-item.green .tl-date{color:#59A398}
+.tl-item.warn .tl-date{color:#b07800}
+.tl-item .tl-text{font-size:12px;color:#333;line-height:1.55}
+
+/* Modal */
+.modal-overlay{display:none;position:absolute;inset:0;background:rgba(26,26,46,.45);z-index:100;align-items:center;justify-content:center;padding:1rem;cursor:pointer}
+.modal-overlay.show{display:flex;animation:fadeIn .2s ease}
+.modal{background:linear-gradient(to bottom,#ffffff,#e8edf8);border:1px solid #d8dce8;border-radius:8px;overflow:hidden;width:100%;max-width:460px;box-shadow:0 8px 32px rgba(0,0,0,.15);cursor:default}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;border-bottom:1px solid #d8dce8}
+.modal-eyebrow{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#59A398}
+.modal-close{background:none;border:none;font-size:1.1rem;color:#59A398;cursor:pointer;line-height:1;padding:0 2px;font-weight:400;transition:color .15s,font-weight .15s}
+.modal-close:hover{color:#5D70AE;font-weight:700}
+.modal-body{padding:1rem 1.1rem 1.2rem}
+.modal-title{font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:.5rem}
+.modal-rule{height:1px;background:#d8dce8;margin:.65rem 0}
+.modal-text{font-size:.8rem;color:#444;line-height:1.65}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="tab-wrap">
+  <div class="tab-bar">
+    <div class="tab active" onclick="showTab(0)">
+      <div class="t-title">AMEX Opt Blue</div>
+      <div class="t-sub">Simplified AMEX</div>
+    </div>
+    <div class="tab" onclick="showTab(1)">
+      <div class="t-title">B2B L2/L3</div>
+      <div class="t-sub">Interchange optimization</div>
+    </div>
+    <div class="tab" onclick="showTab(2)">
+      <div class="t-title">Visa CEDP</div>
+      <div class="t-sub">Replaces L2/L3</div>
+    </div>
+  </div>
+
+  <!-- AMEX Opt Blue -->
+  <div class="panel active" id="panel-0">
+    <p class="panel-eyebrow">Card Network Program</p>
+    <p class="panel-title">AMEX Opt Blue</p>
+    <p class="panel-body">AMEX processed directly through your merchant account, same as Visa and Mastercard. No separate AMEX agreement required for merchants under $3M in annual AMEX volume (updated from $1M, April 2026). One statement, one deposit schedule, no surprises.</p>
+    <div class="tip-grid">
+      <div class="tip-card" onclick="openModal('amex-surcharge')" style="cursor:pointer">
+        <p class="tc-label">Surcharging Eligible</p>
+        <p class="tc-text">AMEX Opt Blue is eligible for surcharging alongside Visa, Mastercard, and Discover. All four networks, one program.</p>
+      </div>
+      <div class="tip-card" onclick="openModal('amex-helps')" style="cursor:pointer">
+        <p class="tc-label">Who It Helps</p>
+        <p class="tc-text">Merchants currently on a direct AMEX ESA agreement or those who've never accepted AMEX due to complexity.</p>
+      </div>
+    </div>
+    <div class="best-for">
+      <svg class="warn-icon" width="15" height="15" viewBox="0 0 24 24" fill="#f5a623" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L1 21h22L12 2z"/><path d="M12 9v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1" fill="#fff"/></svg>
+      <span class="warn-text"><strong>Best for:</strong> Any merchant accepting Visa/MC who wants simplified AMEX acceptance without a separate agreement.</span>
+    </div>
+  </div>
+
+  <!-- B2B L2/L3 -->
+  <div class="panel" id="panel-1">
+    <p class="panel-eyebrow">Interchange Optimization</p>
+    <p class="panel-title">B2B Interchange Optimization: L2/L3</p>
+    <p class="panel-body">Commercial, corporate, and purchasing cards qualify for reduced interchange when additional data is passed at the time of the transaction. The more data you send, the lower the rate.</p>
+    <div class="savings-bar">
+      <div class="savings-pill l2">
+        <div class="sp-level">Level II</div>
+        <div class="sp-savings">20–40 bps</div>
+        <div class="sp-note">Tax amount + customer code</div>
+      </div>
+      <div class="savings-pill l3">
+        <div class="sp-level">Level III</div>
+        <div class="sp-savings">40–90 bps</div>
+        <div class="sp-note">Line-item detail + PO reference</div>
+      </div>
+    </div>
+    <div class="tip-grid">
+      <div class="tip-card">
+        <p class="tc-label">How It Works</p>
+        <p class="tc-text">CardPointe captures the required data fields automatically on qualifying Visa and Mastercard commercial card transactions.</p>
+      </div>
+      <div class="tip-card">
+        <p class="tc-label">Mastercard Note</p>
+        <p class="tc-text">Mastercard L2/L3 remains unchanged. These savings apply to qualifying Visa and Mastercard commercial card volume.</p>
+      </div>
+    </div>
+    <div class="best-for">
+      <svg class="warn-icon" width="15" height="15" viewBox="0 0 24 24" fill="#f5a623" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L1 21h22L12 2z"/><path d="M12 9v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1" fill="#fff"/></svg>
+      <span class="warn-text"><strong>Best for:</strong> B2B merchants processing commercial, corporate, or government purchasing cards.</span>
+    </div>
+  </div>
+
+  <!-- Visa CEDP -->
+  <div class="panel" id="panel-2">
+    <p class="panel-eyebrow">New Visa Program</p>
+    <p class="panel-title">Visa CEDP <span class="new-badge">New Apr 2026</span></p>
+    <p class="panel-body">The Commercial Enhanced Data Program replaces Visa Level 2 and Level 3. Verified merchants qualify for Product 3 rates, which can be up to 15 bps better than old L3 rates. Visa AI now validates data quality, so placeholder data no longer qualifies.</p>
+    <div class="timeline">
+      <div class="tl-item warn">
+        <div class="tl-date">Retired</div>
+        <div class="tl-text">Visa Level 2 retired April 2026. Merchants relying on old L2 rates need to migrate.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">What Changed</div>
+        <div class="tl-text">Visa AI validates transaction data quality. Dummy or placeholder values no longer earn reduced rates.</div>
+      </div>
+      <div class="tl-item green">
+        <div class="tl-date">Opportunity</div>
+        <div class="tl-text">Verified CEDP merchants can earn up to 15 bps better than old L3. CardPointe handles qualification automatically.</div>
+      </div>
+    </div>
+    <div class="tip-grid">
+      <div class="tip-card">
+        <p class="tc-label">Mastercard L2/L3</p>
+        <p class="tc-text">Mastercard's Level 2 and Level 3 programs are unchanged. CEDP is a Visa-only update.</p>
+      </div>
+      <div class="tip-card">
+        <p class="tc-label">Your Talking Point</p>
+        <p class="tc-text">Processors who pass placeholder data just lost those savings. Ask prospects if their current processor has confirmed CEDP compliance.</p>
+      </div>
+    </div>
+    <div class="best-for">
+      <svg class="warn-icon" width="15" height="15" viewBox="0 0 24 24" fill="#f5a623" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L1 21h22L12 2z"/><path d="M12 9v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1" fill="#fff"/></svg>
+      <span class="warn-text"><strong>Best for:</strong> B2B merchants with Visa commercial card volume who want to confirm they are capturing CEDP rates post-April 2026.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-eyebrow" id="modal-eyebrow"></span>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-title" id="modal-title"></p>
+      <div class="modal-rule"></div>
+      <p class="modal-text" id="modal-text"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+var modalContent = {
+  'amex-surcharge': {
+    eyebrow: 'Surcharging Eligible',
+    title: 'All Four Networks, One Program',
+    text: 'AMEX Opt Blue is eligible for surcharging alongside Visa, Mastercard, and Discover. Merchants on a dual pricing or surcharge program can pass processing costs to customers across all four major card networks without separate agreements or processing setups.'
+  },
+  'amex-helps': {
+    eyebrow: 'Who It Helps',
+    title: 'Simplifying AMEX Acceptance',
+    text: 'Merchants currently on a direct AMEX ESA agreement often pay higher rates and deal with separate deposits and statements. Opt Blue consolidates everything. Merchants who avoided AMEX due to complexity or cost can now accept it seamlessly under their existing merchant account.'
+  }
+};
+
+function showTab(i) {
+  document.querySelectorAll('.tab').forEach(function(t, idx) {
+    t.classList.toggle('active', idx === i);
+  });
+  document.querySelectorAll('.panel').forEach(function(p, idx) {
+    p.classList.toggle('active', idx === i);
+  });
+}
+
+function openModal(key) {
+  var c = modalContent[key];
+  if (!c) return;
+  document.getElementById('modal-eyebrow').textContent = c.eyebrow;
+  document.getElementById('modal-title').textContent = c.title;
+  document.getElementById('modal-text').textContent = c.text;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+</script>
+</body>
+</html>
