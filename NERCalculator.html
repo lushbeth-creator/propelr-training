@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr — NER Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.6rem .75rem}
+
+/* Outer wrapper */
+.outer-wrap{border:1px solid #d8dce8;border-radius:8px;overflow:hidden;background:linear-gradient(to bottom,#ffffff,#e8edf8)}
+
+/* Header bar */
+.calc-header{padding:.8rem 1.1rem;border-bottom:1px solid #d8dce8}
+.calc-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#59A398;display:flex;align-items:center;gap:.4rem}
+.calc-title svg{flex-shrink:0}
+
+/* Inputs */
+.calc-body{padding:.9rem 1.1rem;border-bottom:1px solid #d8dce8}
+.calc-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.calc-row:last-child{margin-bottom:0}
+.calc-row label{font-size:.82rem;color:#444;font-weight:500;min-width:175px}
+.calc-row input{flex:1;height:34px;border:1.5px solid #d8dce8;border-radius:7px;padding:0 .7rem;font-family:'Inter',sans-serif;font-size:.85rem;color:#1a1a2e;background:#fff;transition:border-color .15s}
+.calc-row input:focus{outline:none;border-color:#5D70AE}
+
+/* Result */
+.calc-result{display:none;padding:.9rem 1.1rem;border-bottom:1px solid #d8dce8;animation:fadeIn .2s ease}
+.calc-result.show{display:block}
+.result-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+.ner-num{font-size:1.5rem;font-weight:700;color:#1a1a2e;line-height:1}
+.ner-label{font-size:.72rem;color:#999;margin-top:3px;line-height:1.4}
+.ner-verdict{font-size:.76rem;font-weight:700;padding:.28rem .65rem;border-radius:5px;white-space:nowrap}
+.v-good{background:#e6fbf7;color:#1a6b5c}
+.v-ok{background:#fff9e6;color:#7a5500}
+.v-high{background:#fdecea;color:#9b2020}
+.ner-note{font-size:.78rem;color:#555;line-height:1.55;padding-top:.5rem;border-top:1px solid #d8dce8}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="outer-wrap">
+
+  <div class="calc-header">
+    <p class="calc-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#59A398" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+      Net Effective Rate Calculator
+    </p>
+  </div>
+
+  <div class="calc-body">
+    <div class="calc-row">
+      <label for="fees">Total fees charged ($)</label>
+      <input type="number" id="fees" placeholder="e.g. 1250" oninput="calcNER()">
+    </div>
+    <div class="calc-row">
+      <label for="vol">Total amount submitted ($)</label>
+      <input type="number" id="vol" placeholder="e.g. 65000" oninput="calcNER()">
+    </div>
+  </div>
+
+  <div class="calc-result" id="ner-result">
+    <div class="result-row">
+      <div>
+        <div class="ner-num" id="ner-val">—</div>
+        <div class="ner-label">Net Effective Rate</div>
+      </div>
+      <div class="ner-verdict" id="ner-verdict"></div>
+    </div>
+    <div class="ner-note" id="ner-note"></div>
+  </div>
+
+</div>
+
+<script>
+function calcNER() {
+  var f = parseFloat(document.getElementById('fees').value);
+  var v = parseFloat(document.getElementById('vol').value);
+  var res = document.getElementById('ner-result');
+  if (!f || !v || v === 0) { res.classList.remove('show'); return; }
+  var ner = (f / v) * 100;
+  res.classList.add('show');
+  document.getElementById('ner-val').textContent = ner.toFixed(2) + '%';
+  var verd = document.getElementById('ner-verdict');
+  var note = document.getElementById('ner-note');
+  if (ner < 2) {
+    verd.className = 'ner-verdict v-good';
+    verd.textContent = 'Competitive';
+    note.textContent = 'Under 2% — solid. Lead with transparency and long-term relationship value.';
+  } else if (ner <= 2.5) {
+    verd.className = 'ner-verdict v-ok';
+    verd.textContent = 'Improvable';
+    note.textContent = '2–2.5% — there\'s room to optimize. Ask for an itemized IC+ statement to find where costs are hiding.';
+  } else {
+    verd.className = 'ner-verdict v-high';
+    verd.textContent = 'Strong candidate';
+    note.textContent = 'Over 2.5% — a cost-offset conversation (dual pricing or surcharge) is worth having. Run a side-by-side proposal.';
+  }
+}
+</script>
+</body>
+</html>
