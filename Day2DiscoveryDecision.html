@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Discovery &amp; Decision Making</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+.outer{
+  border:1px solid #d8dce8;
+  border-radius:8px;
+  overflow:hidden;
+  background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%);
+}
+
+/* Tab bar */
+.tab-bar{display:flex}
+.tab-btn{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;
+  padding:14px 12px;
+  background:#fff;
+  border:none;
+  border-right:1px solid #d8dce8;
+  cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+.tab-btn:last-child{border-right:none}
+.tab-btn .tab-title{font-weight:700;font-size:14px;color:#333}
+.tab-btn .tab-sub{font-size:11px;color:#777}
+.tab-btn.active{background:#5D70AE}
+.tab-btn.active .tab-title{color:#fff}
+.tab-btn.active .tab-sub{color:#DAF3EF}
+.tab-rule{height:1px;background:#d8dce8}
+
+/* Panel */
+.panel{padding:22px 24px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.eyebrow{text-transform:uppercase;font-size:11px;font-weight:700;letter-spacing:.05em;color:#59A398;margin-bottom:6px}
+.panel-title{font-weight:700;font-size:20px;color:#1B2F5B;margin-bottom:10px;text-wrap:balance}
+.body-text{font-size:13px;color:#444;line-height:1.6;margin-bottom:14px}
+.rule-line{height:1px;background:#d8dce8;margin:16px 0}
+
+/* Steps */
+.steps{}
+.step-row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #e8edf8}
+.step-row:last-child{border-bottom:none}
+.step-num{
+  width:23px;height:23px;border-radius:50%;background:#59A398;color:#fff;
+  font-size:11px;font-weight:700;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.step-text{font-size:13px;color:#444;line-height:1.55}
+.step-text b{color:#1B2F5B}
+
+/* Tip card */
+.tip-card{background:#F3F6FF;border:1px solid #A6B3D5;border-radius:8px;padding:14px 16px;margin-top:16px}
+.tip-label{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#59A398;margin-bottom:4px}
+.tip-card p{font-size:12.5px;color:#444;line-height:1.55}
+
+/* Two-stop cards (shown at top of Discovery tab as framing) */
+.stop-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.stop-card{background:#F3F6FF;border:1px solid #A6B3D5;border-radius:10px;padding:1.1rem 1.2rem;display:flex;flex-direction:column}
+.stop-head-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.stop-eyebrow{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#59A398}
+.stop-badge{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#5D70AE;background:#E8EDF8;border:1px solid #A6B3D5;border-radius:5px;padding:2px 7px;white-space:nowrap}
+.stop-card h4{font-family:'Inter',sans-serif;font-weight:700;font-size:15px;color:#1B2F5B;margin-bottom:6px}
+.stop-card p{font-size:12.5px;color:#444;line-height:1.55}
+
+/* Discussion questions */
+.discuss-list{margin-top:16px}
+.discuss-item{display:flex;gap:10px;margin-bottom:9px;font-size:12.5px;color:#444;line-height:1.5}
+.discuss-item:last-child{margin-bottom:0}
+.dnum{
+  width:20px;height:20px;border-radius:50%;background:#59A398;color:#fff;
+  font-size:11px;font-weight:700;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}/* Field tool cards */
+.field-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+@media (max-width:520px){.field-tool-grid{grid-template-columns:1fr}}
+.field-tool-card{background:#F3F6FF;border:1px solid #A6B3D5;border-radius:8px;padding:1rem 1.1rem;display:flex;flex-direction:column}
+.field-tool-icon{
+  width:34px;height:34px;border-radius:8px;background:#E8EDF8;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;margin-bottom:10px;
+}
+.field-tool-icon svg{width:18px;height:18px;stroke:#5D70AE;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.field-tool-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#59A398;margin-bottom:4px}
+.field-tool-title{font-family:'Inter',sans-serif;font-weight:700;font-size:14.5px;color:#1B2F5B;margin-bottom:6px}
+.field-tool-desc{font-size:12px;color:#444;line-height:1.5;margin-bottom:14px;flex-grow:1}
+.field-tool-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#5D70AE;color:#fff;border-radius:7px;padding:.6rem 1rem;
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;text-decoration:none;
+  transition:background .15s;align-self:flex-start;
+}
+.field-tool-btn:hover{background:#59A398}
+</style>
+</head>
+<body>
+
+<div class="outer">
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabbtn-discovery" onclick="showTab('discovery')">
+      <span class="tab-title">Discovery Appointment</span>
+      <span class="tab-sub">30 min · Learn, don't sell</span>
+    </button>
+    <button class="tab-btn" id="tabbtn-decision" onclick="showTab('decision')">
+      <span class="tab-title">Decision Appointment</span>
+      <span class="tab-sub">40 min · Ask for the business</span>
+    </button>
+  </div>
+  <div class="tab-rule"></div>
+
+  <div class="panel">
+
+    <div class="tab-panel active" id="tab-discovery">
+      <div class="stop-grid">
+        <div class="stop-card">
+          <div class="stop-head-row">
+            <span class="stop-eyebrow">Stop 1</span>
+            <span class="stop-badge">30 Min</span>
+          </div>
+          <h4>Discovery Appointment</h4>
+          <p>Learn, listen, and leave with statements. Your only job is to understand their world: pain points, process, who decides, and when.</p>
+        </div>
+        <div class="stop-card">
+          <div class="stop-head-row">
+            <span class="stop-eyebrow">Stop 2</span>
+            <span class="stop-badge">40 Min</span>
+          </div>
+          <h4>Decision Appointment</h4>
+          <p>Get to yes or no. Come back with a solution built around what you learned, then ask for the business. Maybe is not an answer.</p>
+        </div>
+      </div>
+
+      <div class="eyebrow">Before You Ever Mention Propelr</div>
+      <div class="panel-title">Prepping for the Discovery Appointment</div>
+      <p class="body-text">30 minutes or less. Leave with their last 2 to 3 months of processing statements.</p>
+
+      <div class="steps">
+        <div class="step-row"><div class="step-num">1</div><div class="step-text"><b>Learn their process.</b> How do they handle payments today? Where does it slow down or break? You're building a map, not making a pitch.</div></div>
+        <div class="step-row"><div class="step-num">2</div><div class="step-text"><b>Identify their frustrations.</b> What's not working? What do they keep tolerating? That gap is your opening.</div></div>
+        <div class="step-row"><div class="step-num">3</div><div class="step-text"><b>Clarify the decision timeline.</b> When do they make decisions like this? Who else needs to be involved? Knowing the timeline keeps you from chasing a deal that isn't moving.</div></div>
+        <div class="step-row"><div class="step-num">4</div><div class="step-text"><b>Lock in the next step.</b> Before you leave, lock in the Decision Appointment. You came to learn, now set the meeting where decisions get made.</div></div>
+      </div>
+
+      <div class="field-tool-grid">
+        <div class="field-tool-card">
+          <div class="field-tool-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"/></svg></div>
+          <div class="field-tool-eyebrow">Discovery Tool</div>
+          <div class="field-tool-title">Customer Profile Worksheet</div>
+          <div class="field-tool-desc">Capture merchant needs, concerns, and top priorities before every pitch.</div>
+          <a class="field-tool-btn" href="https://propelrpay1.sharepoint.com/:b:/s/Training/IQD2iO87zIpUToGCLhbf_tLbAYKdkWI9deqEFB_1GFwYQ4E?e=VRNgbN" target="_blank" rel="noopener">Click here to download</a>
+        </div>
+        <div class="field-tool-card">
+          <div class="field-tool-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+          <div class="field-tool-eyebrow">Field Tool</div>
+          <div class="field-tool-title">Merchant Checklist</div>
+          <div class="field-tool-desc">Your discovery conversation guide. Use on every merchant visit to capture the right information.</div>
+          <a class="field-tool-btn" href="https://propelrpay1.sharepoint.com/:b:/s/Training/IQBwwMwrPnGJQo1oNgM2hWG-AYfOAo0w9d5H0xM3n_TPWb8?e=yfzeNU" target="_blank" rel="noopener">Click here to download</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-decision">
+      <div class="eyebrow">Running the Meeting</div>
+      <div class="panel-title">The Decision Appointment</div>
+      <p class="body-text">Come back with a solution built around what Discovery taught you. This is the meeting where you ask for the business.</p>
+
+      <div class="steps">
+        <div class="step-row"><div class="step-num">1</div><div class="step-text"><b>Build Rapport.</b> Starts at first impression and never stops. Get curious about them personally, people open up when they feel seen, not sold to.</div></div>
+        <div class="step-row"><div class="step-num">2</div><div class="step-text"><b>Set the Agenda.</b> Tell them what you'd like to cover and why. Be upfront about the time. Structure signals you respect their day.</div></div>
+        <div class="step-row"><div class="step-num">3</div><div class="step-text"><b>Fact-Finding.</b> Aim for 70% of your time here. Uncover what they value, where they're frustrated, and what Propelr can genuinely solve.</div></div>
+        <div class="step-row"><div class="step-num">4</div><div class="step-text"><b>Qualify Next Steps.</b> Find their timeline. Identify what's in the way. Use the "If I can, will you" framework to test readiness before you come back with a solution.</div></div>
+      </div>
+
+      <div class="field-tool-grid" style="grid-template-columns:1fr;">
+        <div class="field-tool-card">
+          <div class="field-tool-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h6M8 16h4"/></svg></div>
+          <div class="field-tool-eyebrow">Bring This to the Close</div>
+          <div class="field-tool-title">Merchant Services Pre-Application</div>
+          <div class="field-tool-desc">If it's a yes, don't leave without it. Get business, owner, location, and banking info down while you're still in the room.</div>
+          <a class="field-tool-btn" href="https://propelrpay1.sharepoint.com/:b:/s/Training/IQBhoVD7Ip_OR6K9oSrryIxqAbrmwlftvLyiKEK9I_1XHME?e=7zQCaf" target="_blank" rel="noopener">Click here to download</a>
+        </div>
+      </div>
+
+      <div class="rule-line"></div>
+
+      <div class="eyebrow">Discussion</div>
+      <div class="discuss-list">
+        <div class="discuss-item"><div class="dnum">1</div><div>What's your go-to ice breaker when you walk in somewhere for the first time?</div></div>
+        <div class="discuss-item"><div class="dnum">2</div><div>What does a confident, natural agenda sound like in your own words?</div></div>
+        <div class="discuss-item"><div class="dnum">3</div><div>What are two or three questions that would actually tell you if there's a real opportunity here?</div></div>
+        <div class="discuss-item"><div class="dnum">4</div><div>Think about a real objection you've already heard. What did you do with it, and what would you do differently now?</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tabbtn-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
+
+</body>
+</html>
