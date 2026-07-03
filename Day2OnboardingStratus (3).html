@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Onboarding a Deal in Stratus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+.outer{
+  position:relative;
+  border:1px solid #d8dce8;border-radius:8px;overflow:hidden;
+  background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%);
+}
+
+/* Tab bar */
+.tab-bar{display:flex}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:12px 6px;background:#fff;border:none;border-right:1px solid #d8dce8;cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+.tab-btn:last-child{border-right:none}
+.tab-btn .tab-title{font-weight:700;font-size:12px;color:#333;text-align:center}
+.tab-btn.active{background:#5D70AE}
+.tab-btn.active .tab-title{color:#fff}
+.tab-rule{height:1px;background:#d8dce8}
+
+.panel{padding:22px 24px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#59A398;margin-bottom:6px}
+.panel-title{font-family:'Inter',sans-serif;font-weight:700;font-size:20px;color:#1B2F5B;margin-bottom:10px;text-wrap:balance}
+.body-text{font-size:13px;color:#444;line-height:1.6;margin-bottom:14px}
+.rule-line{height:1px;background:#d8dce8;margin:16px 0}
+
+/* Steps */
+.step-row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #e8edf8}
+.step-row:last-child{border-bottom:none}
+.step-num{
+  width:23px;height:23px;border-radius:50%;background:#59A398;color:#fff;
+  font-size:11px;font-weight:700;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.step-text{font-size:13px;color:#444;line-height:1.55}
+.step-text b{color:#1B2F5B}
+
+/* Video buttons */
+.video-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+@media (max-width:600px){.video-row{grid-template-columns:1fr}}
+.video-btn{
+  display:flex;align-items:center;gap:10px;background:#5D70AE;color:#fff;border:none;
+  border-radius:7px;padding:11px 14px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:background .15s;text-align:left;
+}
+.video-btn:hover{background:#59A398}
+.video-btn svg{flex-shrink:0}
+
+/* Accordion (matches Getting Started Resources pattern) */
+.acc{border:1px solid #A6B3D5;border-radius:8px;overflow:hidden;background:#F3F6FF}
+.acc-item{border-top:1px solid #A6B3D5}
+.acc-item:first-child{border-top:none}
+.acc-btn{
+  width:100%;background:none;border:none;padding:14px 18px;display:flex;
+  justify-content:space-between;align-items:center;gap:14px;cursor:pointer;text-align:left;
+  transition:background .15s;
+}
+.acc-btn:hover{background:#e8edf8}
+.acc-left{display:flex;align-items:center;gap:10px}
+.acc-item-icon{width:19px;height:19px;flex-shrink:0}
+.acc-item-icon svg{width:100%;height:100%;stroke:#5D70AE}
+.acc-title{font-family:'Inter',sans-serif;font-weight:700;font-size:13.5px;color:#1B2F5B}
+.acc-icon{
+  width:22px;height:22px;border-radius:50%;background:#ffffff;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .15s,border-color .15s,transform .2s;
+}
+.acc-icon svg{stroke:#5D70AE;transition:stroke .15s;display:block}
+.acc-btn[aria-expanded="true"] .acc-icon{background:#5D70AE;border-color:#5D70AE;transform:rotate(45deg)}
+.acc-btn[aria-expanded="true"] .acc-icon svg{stroke:#fff}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.acc-body.open{max-height:700px}
+.acc-inner{padding:2px 18px 16px;border-top:1px solid #A6B3D5}
+.doc-list{margin:0;padding:0;list-style:none}
+.doc-list li{font-size:12.5px;color:#444;line-height:1.6;padding-left:16px;position:relative;margin-bottom:7px}
+.doc-list li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:#A6B3D5}
+.doc-list li:last-child{margin-bottom:0}
+.doc-list li b{color:#1B2F5B}
+.who-tag{
+  display:inline-block;background:#fff;border:1px solid #A6B3D5;color:#5D70AE;font-size:10px;
+  font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin:10px 0 8px;
+}
+
+/* Summary chips + portal link */
+.summary-chip-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+@media (max-width:600px){.summary-chip-grid{grid-template-columns:1fr}}
+.summary-chip{background:#F3F6FF;border:1px solid #A6B3D5;border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.summary-chip b{font-size:12px;color:#1B2F5B}
+.summary-chip span{font-size:11px;color:#555;line-height:1.4}
+.portal-link-btn{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:#5D70AE;color:#fff;
+  text-decoration:none;font-size:13px;font-weight:600;padding:11px 16px;border-radius:6px;font-family:'Inter',sans-serif;
+}
+.portal-link-btn:hover{background:#59A398}
+
+/* Caution block */
+.caution-block{background:#fff8e6;border:1px solid #B8860B;border-radius:6px;padding:12px 14px;margin-top:14px}
+.caution-text{margin:0 0 14px}
+.caution-text .caution-head{margin-bottom:4px}
+.caution-text ul{list-style:none;padding:0}
+.caution-text li{font-size:12px;color:#9C6B00;line-height:1.5}
+.caution-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#9C6B00;margin-bottom:6px}
+.caution-block ul{margin:0;padding-left:16px}
+.caution-block li{font-size:12px;color:#9C6B00;line-height:1.6}
+
+/* Template block */
+.template-block{background:#fff;border:1px solid #d8dce8;border-radius:6px;padding:14px 16px;margin-top:10px;font-size:12px;color:#444;line-height:1.8}
+.t-row{display:flex;gap:6px}
+.t-label{font-weight:700;color:#1B2F5B;white-space:nowrap}
+
+/* ===== Video modal ===== */
+.overlay{
+  display:none;position:absolute;top:0;left:0;width:100%;min-height:100%;
+  background:rgba(27,47,91,.55);z-index:10;align-items:flex-end;justify-content:center;padding:20px 20px 60px;
+}
+.overlay.show{display:flex}
+.modal{
+  position:relative;width:100%;max-width:640px;
+  background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%);
+  border:1px solid #d8dce8;border-radius:8px;padding:20px;
+}
+.modal-close{
+  position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;line-height:1;
+  color:#59A398;cursor:pointer;font-weight:700;transition:color .15s;padding:4px 8px;
+}
+.modal-close:hover{color:#5D70AE}
+.modal-title{font-family:'Inter',sans-serif;font-weight:700;font-size:16px;color:#1B2F5B;margin-bottom:14px;padding-right:24px}
+.modal video{width:100%;border-radius:6px;display:block;background:#000}
+</style>
+</head>
+<body>
+
+<div class="outer">
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabbtn-steps" onclick="showTab('steps')"><span class="tab-title">Boarding Steps</span></button>
+    <button class="tab-btn" id="tabbtn-quality" onclick="showTab('quality')"><span class="tab-title">Quality Checklist</span></button>
+    <button class="tab-btn" id="tabbtn-docs" onclick="showTab('docs')"><span class="tab-title">Documentation</span></button>
+  </div>
+  <div class="tab-rule"></div>
+
+  <div class="panel">
+
+    <!-- BOARDING STEPS -->
+    <div class="tab-panel active" id="tab-steps">
+      <div class="eyebrow">Working a Deal in Stratus</div>
+      <div class="panel-title">Boarding an Account</div>
+      <p class="body-text">Move your test lead from a lead to a live merchant, tab by tab.</p>
+
+      <div class="caution-text">
+        <div class="caution-head">
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.5L1.5 21h21L12 2.5z" fill="#B8860B"/><rect x="11.1" y="9" width="1.8" height="6" rx="0.9" fill="#ffffff"/><circle cx="12" cy="17.2" r="1.1" fill="#ffffff"/></svg>
+          Punctuation and Capitalization Matter
+        </div>
+        <ul><li>If the Lead Information tab isn't filled out correctly, the deal will be pended.</li></ul>
+      </div>
+
+      <div>
+        <div class="step-row"><div class="step-num">1</div><div class="step-text">You should have created a test lead on Day 1 labeled <b>"[Your Name] - Test Account #1."</b> Let's learn how to move it forward and take it from a lead to a live merchant.</div></div>
+        <div class="step-row"><div class="step-num">2</div><div class="step-text">When you created your test lead, you randomly chose the Platform and Pricing Type. <b>Verify this is correct</b> before moving forward. Once verified, select Save Lead.</div></div>
+        <div class="step-row"><div class="step-num">3</div><div class="step-text">In the <b>Lead Information tab</b>, fill out all of the fields. If the merchant doesn't have a web address, leave that field blank, entering N/A or an invalid site will generate an error.</div></div>
+        <div class="step-row"><div class="step-num">4</div><div class="step-text">Work from left to right through all of the tabs, <b>saving often</b>, especially before moving to a new tab.</div></div>
+        <div class="step-row"><div class="step-num">5</div><div class="step-text">Make sure you've accurately completed all fields, verified your pricing and scheduled rates, and entered parameters for the merchant's software and hardware.</div></div>
+        <div class="step-row"><div class="step-num">6</div><div class="step-text">Look for <b>Online Agreement Forms</b> within the MPA.</div></div>
+        <div class="step-row"><div class="step-num">7</div><div class="step-text">Select <b>Form Share.</b> If working with Woodforest, select WFNB MPA. If working with Fiserv, select Fiserv North Flat.</div></div>
+        <div class="step-row"><div class="step-num">8</div><div class="step-text">Select <b>Generate &amp; Send Email.</b></div></div>
+        <div class="step-row"><div class="step-num">9</div><div class="step-text"><b>Always choose Webform or Online Form.</b></div></div>
+        <div class="step-row"><div class="step-num">10</div><div class="step-text">A preview window will pop up. <b>Verify the email address.</b> Do not click the link within the email yourself, doing so assigns the session to your IP and the merchant won't be able to access it.</div></div>
+        <div class="step-row"><div class="step-num">11</div><div class="step-text">Once the merchant has accessed the link, they need to complete the application in the same session, or you'll need to archive the MPA and re-generate it.</div></div>
+      </div>
+
+      <div class="video-row">
+        <button class="video-btn" onclick="openVideoModal('Set Pricing','Stratus_How_To_Set_Pricing')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ffffff" stroke="none"/></svg>Watch: Set Pricing</button>
+        <button class="video-btn" onclick="openVideoModal('Add Equipment','Stratus_How_To_Add_Equip')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ffffff" stroke="none"/></svg>Watch: Add Equipment</button>
+        <button class="video-btn" onclick="openVideoModal('Send Agreement','Stratus_How_To_Send_Agreement')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ffffff" stroke="none"/></svg>Watch: Send Agreement</button>
+      </div>
+    </div>
+
+    <!-- QUALITY CHECKLIST -->
+    <div class="tab-panel" id="tab-quality">
+      <div class="eyebrow">Keep Your Pipeline Moving</div>
+      <div class="panel-title">Boarding Quality: Common Errors to Avoid</div>
+      <p class="body-text">Small data entry mistakes are the biggest source of pend delays. Open the category that applies to what you're submitting.</p>
+
+      <div class="acc">
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <div class="acc-left">
+              <div class="acc-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></div>
+              <span class="acc-title">Platform, Network &amp; Sales Codes</span>
+            </div>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="doc-list">
+                <li><b>Platform changes</b> must happen before the MPA is sent or signed. Changes after the fact affect required fields and can alter the deal entirely, same rule applies to retail-to-wholesale flips</li>
+                <li><b>Select the correct processing network.</b> Fiserv applications need a Fiserv network selected. The most common error is submitting with TSYS selected instead, double-check any time a platform change is involved</li>
+                <li><b>Fiserv Wholesale deals</b> need the correct Sales Code from CoPilot for that deal type. If you haven't been issued one, reach out to <a href="mailto:partnerdev@propelrpay.com" style="color:#5D70AE;font-weight:600;">partnerdev@propelrpay.com</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <div class="acc-left">
+              <div class="acc-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9.5h3.5a1.8 1.8 0 0 1 0 3.6H9m0 0h4.5M9 13.1h4"/></svg></div>
+              <span class="acc-title">Pricing &amp; Fees</span>
+            </div>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="doc-list">
+                <li><b>IC+ pricing</b> is entered as a percentage, not basis points. Remember, bps are 1/100th of a percent, double-check the format before submitting</li>
+                <li><b>Internet sales percentage</b> should be left blank when the merchant uses a Virtual Terminal or a digital invoicing process. Adding one anyway is a data entry error we're seeing more often</li>
+                <li><b>Surcharge rate cap:</b> card brand rules cap surcharge at 4% (not to exceed the cost of processing), but Fiserv has its own cap of 3%. The surcharge addendum is now built directly into the Flat Rate/Surcharge application in Stratus</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <div class="acc-left">
+              <div class="acc-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5"/><path d="M15 4h5v5M20 4l-6 6"/></svg></div>
+              <span class="acc-title">Ownership, Documentation &amp; Contact Info</span>
+            </div>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="doc-list">
+                <li><b>Owner 1 details and the Control Prong</b> must both be filled out completely and must match each other. Partial owner info that conflicts with the Control Prong is a recurring issue, double-check before submission</li>
+                <li><b>Federal credit unions</b> won't authenticate through GIACT. Get a voided check and/or bank letter, best practice is to ask for this documentation upfront regardless of bank type</li>
+                <li><b>Website field</b> should only contain the merchant's real URL. Entering a placeholder like "nowebsite.com" or "NA" disrupts underwriting automations, if the merchant has no website, handle it as its own case rather than faking one</li>
+                <li><b>Email addresses</b> need to be valid and properly formatted before submission</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <div class="acc-left">
+              <div class="acc-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg></div>
+              <span class="acc-title">Duplicating a Deal (Operations Only)</span>
+            </div>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <div class="who-tag">Not for Sales Partners</div>
+              <p style="font-size:12.5px;color:#444;line-height:1.6;margin-bottom:8px;">The duplicate feature is limited to Operations teams. If it's ever used, every field should reflect only the new lead, so:</p>
+              <ul class="doc-list">
+                <li>Switch the Category to Lead Development</li>
+                <li>Deselect everything except "Link to Original," "Copy Custom Properties," and "Assign to Me"</li>
+                <li>Clear out fields that should be blank for the new lead, such as the MID</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="eyebrow" style="margin-top:20px;">Moving a Merchant Off CardConnect After a Decline</div>
+      <p class="body-text" style="margin-bottom:6px;">Use this template to request an underwriting placement review.</p>
+      <div class="template-block" id="decline-template">
+        <div class="t-row"><span class="t-label">To:</span><span>underwriting@propelrpay.com</span></div>
+        <div class="t-row"><span class="t-label">Subject:</span><span>CardConnect Decline Placement Review</span></div>
+        <div style="margin-top:8px;">
+          <div class="t-row"><span class="t-label">DBA Name:</span></div>
+          <div class="t-row"><span class="t-label">URL:</span></div>
+          <div class="t-row"><span class="t-label">MID:</span></div>
+          <div class="t-row"><span class="t-label">Copilot UW ticket #:</span></div>
+          <div class="t-row"><span class="t-label">ISV:</span></div>
+          <div class="t-row"><span class="t-label">Decline Reason:</span></div>
+          <div class="t-row"><span class="t-label">Actual Volume:</span></div>
+          <div class="t-row"><span class="t-label">Actual Av Ticket:</span></div>
+          <div class="t-row"><span class="t-label">Actual High Ticket:</span></div>
+          <div class="t-row"><span class="t-label">Any relevant notes for review:</span></div>
+          <div class="t-row" style="margin-top:8px;"><span class="t-label">Propelr Underwriting placement recommendation:</span></div>
+        </div>
+      </div>
+      <a class="portal-link-btn" href="mailto:underwriting@propelrpay.com?subject=CardConnect%20Decline%20Placement%20Review&body=DBA%20Name%3A%20%0D%0AURL%3A%20%0D%0AMID%3A%20%0D%0ACopilot%20UW%20ticket%20%23%3A%20%0D%0AISV%3A%20%0D%0ADecline%20Reason%3A%20%0D%0AActual%20Volume%3A%20%0D%0AActual%20Av%20Ticket%3A%20%0D%0AActual%20High%20Ticket%3A%20%0D%0AAny%20relevant%20notes%20for%20review%3A%20%0D%0A%0D%0APropelr%20Underwriting%20placement%20recommendation%3A%20">Email Underwriting with this Template <span>&#8594;</span></a>
+    </div>
+
+    <!-- DOCUMENTATION -->
+    <div class="tab-panel" id="tab-docs">
+      <div class="eyebrow">What to Submit, and When</div>
+      <div class="panel-title">Core Documentation &amp; Requirements</div>
+      <p class="body-text">Which forms a deal needs depends on the merchant type. Full requirements and forms live on the Employee Portal, here's what each covers so you know which one to open.</p>
+
+      <div class="summary-chip-grid">
+        <div class="summary-chip"><b>Ecommerce Requirements</b><span>Card-not-present merchants. Website policies, HTTPS, currency rules.</span></div>
+        <div class="summary-chip"><b>Future Delivery Questionnaire</b><span>Contractors, event vendors, deposit-based businesses.</span></div>
+        <div class="summary-chip"><b>Fraud Prevention Best Practices</b><span>Red flags to walk merchants through, especially CNP.</span></div>
+        <div class="summary-chip"><b>High Ticket &amp; ACH Basics</b><span>Average vs. high ticket, and how holds/releases work.</span></div>
+        <div class="summary-chip"><b>Equipment ACH Authorization Form</b><span>Generates automatically once equipment is added to the deal, nothing to fill out manually.</span></div>
+      </div>
+
+      <a href="https://propelrpay1.sharepoint.com/sites/Employee-Portal/SitePages/Underwriting---Risk.aspx#resources" target="_blank" rel="noopener" class="portal-link-btn">View full documentation requirements on the Employee Portal <span>&#8594;</span></a>
+    </div>
+
+  </div>
+
+  <div class="overlay" id="videoOverlay" onclick="if(event.target===this)closeVideoModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeVideoModal()">&times;</button>
+      <p class="modal-title" id="modalTitle">Video</p>
+      <video id="stratusVideo" controls>
+        <source id="stratusSource" src="" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tabbtn-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+function tog(btn){
+  var exp = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!exp));
+  var body = btn.nextElementSibling;
+  if (exp) { body.classList.remove('open'); } else { body.classList.add('open'); }
+}
+function openVideoModal(title, filename){
+  document.getElementById('modalTitle').textContent = title;
+  var source = document.getElementById('stratusSource');
+  source.src = 'https://lushbeth-creator.github.io/propelr-training/' + filename + '.mp4';
+  document.getElementById('stratusVideo').load();
+  document.getElementById('videoOverlay').classList.add('show');
+}
+function closeVideoModal(){
+  document.getElementById('videoOverlay').classList.remove('show');
+  document.getElementById('stratusVideo').pause();
+}
+</script>
+</body>
+</html>
