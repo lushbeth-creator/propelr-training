@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Day 2 Afternoon Assignments</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+.outer{
+  border:1px solid #d8dce8;border-radius:8px;overflow:hidden;
+  background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%);
+}
+.panel{padding:22px 24px}
+
+.eyebrow{font-size:16px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#5D70AE;margin-bottom:14px}
+
+.card-body{font-size:12.5px;color:#555555;line-height:1.55}
+.card-body strong{color:#1B2F5B;font-weight:700}
+.card-body + .card-body{margin-top:8px}
+.card-cta{display:inline-block;font-size:11.5px;font-weight:700;color:#5D70AE;letter-spacing:.02em;text-decoration:none}
+.card-cta:hover{color:#59A398}
+.cta-row{display:flex;justify-content:center;flex-wrap:wrap;gap:18px 24px;margin-top:14px}
+.task-item{
+  display:block;position:relative;padding-left:18px;margin:4px 0 6px;
+  font-size:12.5px;font-weight:700;color:#1B2F5B;line-height:1.5;
+}
+.task-item::before{content:"\203A";position:absolute;left:0;top:0;color:#59A398;font-weight:700;font-size:15px;line-height:1.3}
+.inline-link{color:#5D70AE;font-weight:700;text-decoration:none}
+.inline-link:hover{color:#59A398;text-decoration:underline}
+.inline-link.green{color:#59A398}
+.inline-link.green:hover{color:#5D70AE}
+
+/* ===== Assignment accordion ===== */
+.acc{border:1px solid #A6B3D5;border-radius:8px;overflow:hidden;background:#F3F6FF}
+.acc-item{border-top:1px solid #A6B3D5}
+.acc-item:first-child{border-top:none}
+.acc-btn{
+  width:100%;background:none;border:none;padding:14px 18px;display:flex;
+  justify-content:space-between;align-items:center;gap:14px;cursor:pointer;text-align:left;
+  transition:background .15s;
+}
+.acc-btn:hover{background:#e8edf8}
+.acc-left{display:flex;align-items:center;gap:10px}
+.acc-num{
+  width:22px;height:22px;border-radius:50%;background:#59A398;color:#fff;
+  font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.acc-item-icon{width:19px;height:19px;flex-shrink:0}
+.acc-item-icon svg{width:100%;height:100%;stroke:#5D70AE}
+.acc-title{font-family:'Inter',sans-serif;font-weight:700;font-size:14px;color:#1B2F5B}
+.acc-icon{
+  width:22px;height:22px;border-radius:50%;background:#ffffff;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .15s,border-color .15s,transform .2s;
+}
+.acc-icon svg{stroke:#5D70AE;transition:stroke .15s;display:block}
+.acc-btn[aria-expanded="true"] .acc-icon{background:#5D70AE;border-color:#5D70AE;transform:rotate(45deg)}
+.acc-btn[aria-expanded="true"] .acc-icon svg{stroke:#fff}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.acc-body.open{max-height:500px}
+.acc-inner{padding:4px 18px 18px;border-top:1px solid #A6B3D5}
+
+.caution-block{background:#fff8e6;border:1px solid #B8860B;border-radius:6px;padding:12px 14px;margin-top:12px}
+.caution-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#9C6B00;margin-bottom:6px}
+.caution-block ul{margin:0;padding-left:16px}
+.caution-block li{font-size:12px;color:#9C6B00;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="outer">
+  <div class="panel">
+
+    <p class="eyebrow">Day 2 &middot; Afternoon Assignments</p>
+
+    <div class="acc">
+
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+          <div class="acc-left">
+            <span class="acc-num">1</span>
+            <div class="acc-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="12" rx="1.5"/>
+                <path d="M2 19h20l-2-3H4l-2 3z"/>
+              </svg>
+            </div>
+            <span class="acc-title">eLearning in Reach 360</span>
+          </div>
+          <span class="acc-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+              <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-inner">
+            <p class="task-item">Anti-Phishing Awareness</p>
+            <p class="card-body">Complete in Reach 360 before Session 3.</p>
+            <p class="card-body">Check your email for your enrollment link. No assignments showing yet? <a class="inline-link" href="mailto:blush@propelrpay.com?subject=Reach%20360%20Enrollment" target="_blank" rel="noopener">Email Beth</a> to get enrolled.</p>
+
+            <div class="caution-block">
+              <div class="caution-head">
+                <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2.5L1.5 21h21L12 2.5z" fill="#B8860B"/><rect x="11.1" y="9" width="1.8" height="6" rx="0.9" fill="#ffffff"/><circle cx="12" cy="17.2" r="1.1" fill="#ffffff"/></svg>
+                If You're Emailing Beth
+              </div>
+              <ul><li>If you're emailing Beth, it means you're behind on Day 1's assignments. These are mandatory, get caught up before tomorrow's session. <a class="inline-link green" href="https://propelrpay1.sharepoint.com/sites/Training/SitePages/Day-1.aspx#before-next-session-____________________________________________________________________" target="_blank" rel="noopener">Day 1 &middot; Afternoon Assignment</a> for what you missed.</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+          <div class="acc-left">
+            <span class="acc-num">2</span>
+            <div class="acc-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="3" width="14" height="18" rx="1.5"/>
+                <path d="M8 8h6M8 12h6M8 16h4"/>
+                <circle cx="17" cy="17" r="5" fill="#ffffff"/>
+                <path d="M14.5 17.2l1.8 1.8 3.2-3.5"/>
+              </svg>
+            </div>
+            <span class="acc-title">Stratus: Convert Test Lead to MPA</span>
+          </div>
+          <span class="acc-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+              <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-inner">
+            <p class="task-item">Convert your test lead into an MPA in Stratus</p>
+            <p class="card-body">Send to <a class="inline-link" href="mailto:blush@propelrpay.com">blush@propelrpay.com</a> and <a class="inline-link" href="mailto:dspence@propelrpay.com">dspence@propelrpay.com</a>, cc your leader.</p>
+            <div class="cta-row">
+              <a class="card-cta" href="https://stratus.propelrpay.com/v2/#ui-tabs-5" target="_blank" rel="noopener">Open Stratus &#8594;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+          <div class="acc-left">
+            <span class="acc-num">3</span>
+            <div class="acc-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 4h18l-7 9v6l-4 2v-8L3 4z"/>
+              </svg>
+            </div>
+            <span class="acc-title">CRM Development</span>
+          </div>
+          <span class="acc-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round">
+              <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+            </svg>
+          </span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-inner">
+            <p class="card-body">Start fueling your Sales Funnels and enter new leads in Stratus.</p>
+            <p class="card-body"><strong>Required by end of week:</strong> 20 leads and 1 confirmed appointment.</p>
+            <div class="cta-row">
+              <a class="card-cta" href="https://stratus.propelrpay.com/v2/#ui-tabs-5" target="_blank" rel="noopener">Open Stratus &#8594;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function tog(btn) {
+  var exp = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!exp));
+  var body = btn.nextElementSibling;
+  if (exp) { body.classList.remove('open'); } else { body.classList.add('open'); }
+}
+</script>
+</body>
+</html>
