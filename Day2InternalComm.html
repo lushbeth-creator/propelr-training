@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Internal Communication &amp; SLAs</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+.outer{border:1px solid #d8dce8;border-radius:8px;overflow:hidden;background:linear-gradient(to bottom,#ffffff 0%,#e8edf8 100%)}
+
+/* Tab bar */
+.tab-bar{display:flex}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:12px 8px;background:#fff;border:none;border-right:1px solid #d8dce8;cursor:pointer;font-family:'Inter',sans-serif;
+}
+.tab-btn:last-child{border-right:none}
+.tab-btn .tab-title{font-weight:700;font-size:13px;color:#333}
+.tab-btn.active{background:#5D70AE}
+.tab-btn.active .tab-title{color:#fff}
+.tab-rule{height:1px;background:#d8dce8}
+
+.panel{padding:22px 24px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#59A398;margin-bottom:6px}
+.panel-title{font-family:'Inter',sans-serif;font-weight:700;font-size:20px;color:#1B2F5B;margin-bottom:10px;text-wrap:balance}
+.body-text{font-size:13px;color:#444;line-height:1.6;margin-bottom:14px}
+.rule-line{height:1px;background:#d8dce8;margin:16px 0}
+
+/* Two-col roles */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+@media (max-width:480px){.two-col{grid-template-columns:1fr}}
+.col-card{background:#F3F6FF;border:1px solid #A6B3D5;border-radius:10px;padding:1.1rem 1.2rem 1.3rem;display:flex;flex-direction:column}
+.col-eyebrow{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#59A398;margin-bottom:4px;min-height:14px}
+.col-card h4{font-family:'Inter',sans-serif;font-weight:700;font-size:17px;color:#1B2F5B;margin-bottom:12px}
+.col-item{margin-bottom:12px}
+.col-item:last-child{margin-bottom:0}
+.col-item .label{font-size:12px;font-weight:700;color:#1B2F5B;margin-bottom:3px}
+.col-item .desc{font-size:12px;color:#555;line-height:1.5}
+
+/* Accordion (matches Getting Started Resources pattern) */
+.acc{border:1px solid #A6B3D5;border-radius:8px;overflow:hidden;background:#F3F6FF}
+.acc-item{border-top:1px solid #A6B3D5}
+.acc-item:first-child{border-top:none}
+.acc-btn{
+  width:100%;background:none;border:none;padding:14px 18px;display:flex;
+  justify-content:space-between;align-items:center;gap:14px;cursor:pointer;text-align:left;transition:background .15s;
+}
+.acc-btn:hover{background:#e8edf8}
+.acc-title{font-family:'Inter',sans-serif;font-weight:700;font-size:13.5px;color:#1B2F5B}
+.acc-icon{
+  width:22px;height:22px;border-radius:50%;background:#ffffff;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,border-color .15s,transform .2s;
+}
+.acc-icon svg{stroke:#5D70AE;transition:stroke .15s;display:block}
+.acc-btn[aria-expanded="true"] .acc-icon{background:#5D70AE;border-color:#5D70AE;transform:rotate(45deg)}
+.acc-btn[aria-expanded="true"] .acc-icon svg{stroke:#fff}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.acc-body.open{max-height:400px}
+.acc-inner{padding:2px 18px 16px;border-top:1px solid #A6B3D5;font-size:12.5px;color:#444;line-height:1.6}
+
+/* Portal link */
+.portal-link-btn{
+  display:inline-flex;align-items:center;gap:8px;margin-top:6px;background:#5D70AE;color:#fff;
+  text-decoration:none;font-size:13px;font-weight:600;padding:11px 16px;border-radius:6px;font-family:'Inter',sans-serif;
+}
+.portal-link-btn:hover{background:#59A398}
+</style>
+</head>
+<body>
+
+<div class="outer">
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabbtn-roles" onclick="showTab('roles')"><span class="tab-title">Roles</span></button>
+    <button class="tab-btn" id="tabbtn-comms" onclick="showTab('comms')"><span class="tab-title">Communication &amp; SLAs</span></button>
+  </div>
+  <div class="tab-rule"></div>
+
+  <div class="panel">
+
+    <!-- ROLES -->
+    <div class="tab-panel active" id="tab-roles">
+      <div class="eyebrow">Two Teams, Two Roles</div>
+      <div class="panel-title">Underwriting &amp; Boarding</div>
+      <p class="body-text">Two separate teams, two distinct roles. Both critical to getting your merchant live.</p>
+
+      <div class="two-col">
+        <div class="col-card">
+          <div class="col-eyebrow">Assesses Risk</div>
+          <h4>Underwriting</h4>
+          <div class="col-item"><div class="label">Risk Assessment</div><div class="desc">Reviews every application against Propelr's standards, evaluating business type, volume, ticket size, and ownership.</div></div>
+          <div class="col-item"><div class="label">Future Delivery Accounts</div><div class="desc">Merchants collecting payment before delivering goods/services require a Future Service Questionnaire.</div></div>
+          <div class="col-item"><div class="label">Average vs. High Ticket</div><div class="desc">Inflated figures cause holds. High ticket means regularly occurring large transactions, not seasonal or one-off.</div></div>
+          <div class="col-item"><div class="label">Communication Flow</div><div class="desc">Underwriting communicates through the sales partner unless direct merchant contact is required.</div></div>
+        </div>
+        <div class="col-card">
+          <div class="col-eyebrow">Configures the Account</div>
+          <h4>Boarding</h4>
+          <div class="col-item"><div class="label">Platform Configuration</div><div class="desc">Boarding Specialists set up card types, pricing, and equipment so merchants can process on day one.</div></div>
+          <div class="col-item"><div class="label">Equipment &amp; Gateway Required</div><div class="desc">Both required on every submission, even VAR-only requests. Never leave either field blank in Stratus.</div></div>
+          <div class="col-item"><div class="label">Cover Sheet Required</div><div class="desc">Always add a cover sheet for equipment and gateway details. Accurate labels matter for API feeds.</div></div>
+          <div class="col-item"><div class="label">Platform Changes First</div><div class="desc">Any platform or retail-to-wholesale flip must happen before the MPA is signed.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMUNICATION & SLAs -->
+    <div class="tab-panel" id="tab-comms">
+      <div class="eyebrow">Tracking &amp; Turnaround</div>
+      <div class="panel-title">Tickets &amp; SLAs</div>
+      <p class="body-text">Status shows in Stratus. Updates come through support tickets and email. Underwriting communicates through you, not directly to the merchant, unless direct contact is required. For pended deals, attach documents and notes directly to the support ticket, not the lead.</p>
+
+      <a href="https://propelrpay1.sharepoint.com/sites/Employee-Portal/SitePages/Tickets-&amp;-SLAs.aspx" target="_blank" rel="noopener" class="portal-link-btn">View all ticket categories &amp; SLA timeframes on the Employee Portal <span>&#8594;</span></a>
+
+      <div class="rule-line"></div>
+
+      <div class="eyebrow">Internal Communication: What to Expect</div>
+      <div class="acc" style="margin-top:6px;">
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <span class="acc-title">How do I check on my deal?</span>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body"><div class="acc-inner">Status lives in Stratus first. Once boarding starts, you'll also get email notifications as the file moves, confirmation the file is complete, tracking info if equipment was ordered, and a note once the account is set up and ready to process.</div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <span class="acc-title">What resources do I have if I get stuck?</span>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body"><div class="acc-inner">Start with the Employee Portal and this page. For anything Stratus can't answer, open a ticket in the Helpdesk rather than emailing individual team members, it's what keeps your request inside the SLA.</div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" aria-expanded="false" onclick="tog(this)">
+            <span class="acc-title">What should I tell my merchant to expect?</span>
+            <span class="acc-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/></svg></span>
+          </button>
+          <div class="acc-body"><div class="acc-inner">Set the timeline at the close so nothing feels like a surprise later, when boarding will reach out, roughly how long approval takes, and when to expect the welcome call once the account is live. A merchant who knows what's coming stays calmer if something gets pended.</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('tabbtn-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+function tog(btn){
+  var exp = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!exp));
+  var body = btn.nextElementSibling;
+  if (exp) { body.classList.remove('open'); } else { body.classList.add('open'); }
+}
+</script>
+</body>
+</html>
