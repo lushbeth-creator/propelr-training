@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Weekly Kickoff Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:.5rem}
+
+.outer{
+}
+.panel{padding:22px 24px}
+
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#59A398;margin-bottom:6px}
+.ptitle{font-family:'Inter',sans-serif;font-weight:700;font-size:22px;color:#1B2F5B;margin-bottom:10px}
+.pbody{font-size:15px;color:#444;line-height:1.6;margin-bottom:16px;max-width:100%}
+
+/* Goals area: no outer box anymore, just a layout wrapper */
+.goals-window{
+  margin-bottom:8px;
+}
+.goals-progress{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.progress-count{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#1B2F5B;white-space:nowrap}
+.progress-bar-track{flex:1;min-width:120px;height:8px;background:#e8edf8;border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;width:0%;background:#59A398;border-radius:4px;transition:width .25s ease}
+.progress-note{font-size:11.5px;color:#5D70AE;font-weight:600;white-space:nowrap}
+.clear-all-btn{
+  background:transparent;border:1px solid #A6B3D5;border-radius:6px;
+  padding:6px 12px;font-size:11.5px;font-weight:700;color:#5D70AE;
+  cursor:pointer;white-space:nowrap;transition:border-color .15s ease, color .15s ease;
+}
+.clear-all-btn:hover{border-color:#5D70AE;color:#59A398}
+
+/* Carousel controls */
+.carousel-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:14px;margin-top:6px;border-top:1px solid #5D70AE;
+}
+.carousel-heading{font-size:13px;font-weight:700;color:#1B2F5B}
+.carousel-nav{display:flex;align-items:center;gap:8px}
+.carousel-nav button{
+  width:26px;height:26px;border-radius:50%;border:1px solid #A6B3D5;background:#ffffff;
+  color:#5D70AE;font-weight:700;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;
+}
+.carousel-nav button:hover{border-color:#5D70AE}
+.carousel-dots{display:flex;gap:6px}
+.carousel-dot{width:7px;height:7px;border-radius:50%;background:#A6B3D5;transition:background .15s}
+.carousel-dot.active{background:#59A398}
+
+.carousel-track{position:relative}
+.carousel-slide{display:none}
+.carousel-slide.active{display:block}
+
+/* Gradient hover card: replaces the old bordered "window" per section */
+.hover-card{
+  border:1px solid #5D70AE;border-radius:8px;
+  background:linear-gradient(160deg,#ffffff 0%,#E8EDF8 100%);
+  padding:16px 18px;margin-bottom:28px;
+  transition:transform .18s ease, background .18s ease;
+}
+.hover-card:hover{
+  background:linear-gradient(160deg,#ffffff 0%,#DAF3EF 100%);
+  transform:scale(1.02);
+}
+
+/* Icon square, sits inside the same card as its info */
+.icon-box{
+  width:38px;height:38px;flex-shrink:0;border-radius:8px;background:#ffffff;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon-box svg{width:20px;height:20px;stroke:#5D70AE;transition:stroke .18s ease}
+.hover-card:hover .icon-box svg{stroke:#59A398}
+
+.list-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
+}
+.list-left{display:flex;flex-direction:column;gap:2px;flex:1}
+.list-eyebrow{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#59A398}
+.list-title{font-family:'Inter',sans-serif;font-weight:700;font-size:14.5px;color:#1B2F5B}
+.list-tally{font-size:11px;color:#5D70AE;font-weight:600;white-space:nowrap}
+
+.list-body{padding:2px 0 0}
+
+/* Header for each carousel slide */
+.slide-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
+}
+
+/* Checklist rows: checkbox + prompt only */
+.check-row{padding:12px 0;border-bottom:1px solid #dfe4f7;display:flex;align-items:flex-start;gap:10px}
+.check-row:last-child{border-bottom:none}
+.check-row input[type="checkbox"]{width:20px;height:20px;flex-shrink:0;margin-top:1px;accent-color:#59A398;cursor:pointer}
+.check-row label{font-size:13px;color:#333;line-height:1.5;cursor:pointer}
+.check-row label strong{color:#1B2F5B}
+.check-row.done label{color:#59A398;text-decoration:line-through}
+
+.stratus-btn{
+  display:block;text-align:center;margin-top:14px;
+  background:#5D70AE;color:#ffffff;font-size:12.5px;font-weight:700;
+  text-decoration:none;border-radius:6px;padding:12px 16px;
+  transition:background .15s ease;
+}
+.stratus-btn:hover{background:#59A398}
+
+/* Mission standards, now standalone cards on the plain background */
+.mission-section{margin-top:4px}
+.section-heading{font-family:'Inter',sans-serif;font-weight:700;font-size:19px;color:#1B2F5B;margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 0}
+.stat-caption{
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#59A398;
+  margin-top:8px;
+}
+.stat-grid-2{grid-template-columns:repeat(2,1fr);padding-top:0}
+.stat-card{
+  border:1px solid #A6B3D5;border-radius:8px;padding:12px 8px;text-align:center;
+  background:linear-gradient(160deg,#ffffff 0%,#E8EDF8 100%);
+  transition:transform .18s ease, background .18s ease;
+}
+.stat-card:hover{background:linear-gradient(160deg,#ffffff 0%,#DAF3EF 100%);transform:scale(1.05)}
+.stat-number{font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:#59A398}
+.stat-label{font-size:11px;color:#1B2F5B;font-weight:600;margin-top:2px}
+
+.stat-grid-large .stat-card{padding:22px 8px}
+.stat-grid-large .stat-number{font-size:34px}
+.stat-grid-large .stat-label{font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="outer">
+  <div class="panel">
+
+    <p class="ptitle">Weekly Kickoff</p>
+    <p class="pbody">Spend about an hour on your own each week working through this, so you always know exactly what needs to happen next.</p>
+
+    <!-- Goals & Priorities, scrollable sections, progress and steps all share this one window -->
+    <div class="hover-card">
+      <div class="carousel-track" id="carousel-track">
+
+        <!-- Slide 1: Review Last Week -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>
+              </svg>
+            </span>
+            <span class="list-left">
+              <span class="list-eyebrow">Step 1</span>
+              <span class="list-title">Review Last Week</span>
+            </span>
+            <span class="list-tally" data-tally>0/2</span>
+          </div>
+          <div class="list-body">
+            <div class="check-row">
+              <input type="checkbox" id="goal-1" onchange="onCheck(this)">
+              <label for="goal-1">Review last week's numbers against your mission standards. Note where you landed.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-2" onchange="onCheck(this)">
+              <label for="goal-2">Scan Stratus for any deals that stalled or went quiet. Decide your next move on each.</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Set the Week Up -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>
+              </svg>
+            </span>
+            <span class="list-left">
+              <span class="list-eyebrow">Step 2</span>
+              <span class="list-title">Set the Week Up</span>
+            </span>
+            <span class="list-tally" data-tally>0/5</span>
+          </div>
+          <div class="list-body">
+            <div class="check-row">
+              <input type="checkbox" id="goal-3" onchange="onCheck(this)">
+              <label for="goal-3">Set your top priority for the week.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-4" onchange="onCheck(this)">
+              <label for="goal-4">Identify the account or opportunity that needs your attention most.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-5" onchange="onCheck(this)">
+              <label for="goal-5">Block time on your calendar for prospecting, every day this week.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-6" onchange="onCheck(this)">
+              <label for="goal-6">Set a daily conversation target that adds up to 25 for the week.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-7" onchange="onCheck(this)">
+              <label for="goal-7">Choose one thing you want to improve on this week.</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Prep What's Already Scheduled -->
+        <div class="carousel-slide">
+          <div class="slide-header">
+            <span class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>
+              </svg>
+            </span>
+            <span class="list-left">
+              <span class="list-eyebrow">Step 3</span>
+              <span class="list-title">Prep What's Already Scheduled</span>
+            </span>
+            <span class="list-tally" data-tally>0/3</span>
+          </div>
+          <div class="list-body">
+            <div class="check-row">
+              <input type="checkbox" id="goal-8" onchange="onCheck(this)">
+              <label for="goal-8">Confirm every demo on your calendar this week, and prep materials for each.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-9" onchange="onCheck(this)">
+              <label for="goal-9">Follow up on any outstanding proposals before they go cold.</label>
+            </div>
+            <div class="check-row">
+              <input type="checkbox" id="goal-10" onchange="onCheck(this)">
+              <label for="goal-10">Confirm paperwork, Merchant Checklist, Pre-Application, Customer Profile Worksheet, is ready for any installs this week.</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="carousel-topbar">
+        <span class="carousel-heading">This Week's Goals &amp; Priorities</span>
+        <div class="carousel-nav">
+          <button id="car-prev" aria-label="Previous section">&lsaquo;</button>
+          <div class="carousel-dots" id="car-dots"></div>
+        <button id="car-next" aria-label="Next section">&rsaquo;</button>
+      </div>
+      </div>
+
+      <div class="goals-progress">
+        <p class="progress-count" id="progressCount">0 of 10 complete</p>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <p class="progress-note" id="progressNote">Let's kick off the week</p>
+        <button id="clear-all" class="clear-all-btn">Clear All</button>
+      </div>
+    </div>
+
+    <!-- Mission Standards, reference only, always visible directly below -->
+    <div class="mission-section">
+      <p class="section-heading">Mission Standards</p>
+      <p class="stat-caption">Weekly Goals</p>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-number">25</div>
+          <div class="stat-label">Conversations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Demos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Proposals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Installs</div>
+        </div>
+      </div>
+      <p class="stat-caption">Monthly Goals</p>
+      <div class="stat-grid stat-grid-2 stat-grid-large">
+        <div class="stat-card">
+          <div class="stat-number">4</div>
+          <div class="stat-label">Deals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">$15K</div>
+          <div class="stat-label">Margin</div>
+        </div>
+      </div>
+      <a class="stratus-btn" href="https://stratus.propelrpay.com/" target="_blank" rel="noopener">Check your live numbers in Merchant Reporting, Stratus Dashboard &rsaquo;</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var TOTAL = 10;
+
+function onCheck(cb) {
+  var row = cb.closest('.check-row');
+  row.classList.toggle('done', cb.checked);
+  updateProgress();
+}
+
+document.getElementById('clear-all').onclick = function() {
+  document.querySelectorAll('.check-row input[type="checkbox"]').forEach(function(cb) {
+    cb.checked = false;
+    cb.closest('.check-row').classList.remove('done');
+  });
+  updateProgress();
+};
+
+function updateProgress() {
+  var checked = document.querySelectorAll('.check-row input[type="checkbox"]:checked');
+  var count = checked.length;
+
+  document.getElementById('progressCount').textContent = count + ' of ' + TOTAL + ' complete';
+  document.getElementById('progressFill').style.width = Math.round((count / TOTAL) * 100) + '%';
+
+  var note = document.getElementById('progressNote');
+  if (count === 0) note.textContent = "Let's kick off the week";
+  else if (count < TOTAL) note.textContent = 'Keep going';
+  else note.textContent = 'Week is set, go get it';
+
+  document.querySelectorAll('.carousel-slide').forEach(function(section) {
+    var tally = section.querySelector('[data-tally]');
+    if (!tally) return;
+    var sectionChecked = section.querySelectorAll('input[type="checkbox"]:checked').length;
+    var sectionTotal = section.querySelectorAll('input[type="checkbox"]').length;
+    tally.textContent = sectionChecked + '/' + sectionTotal;
+  });
+}
+
+updateProgress();
+
+/* Carousel */
+var track = document.getElementById('carousel-track');
+var slides = track.querySelectorAll('.carousel-slide');
+var dotsWrap = document.getElementById('car-dots');
+var activeIndex = 0;
+
+slides.forEach(function(_, i) {
+  var dot = document.createElement('span');
+  dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+  dotsWrap.appendChild(dot);
+});
+var dots = dotsWrap.querySelectorAll('.carousel-dot');
+
+function showSlide(i) {
+  activeIndex = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach(function(slide, idx) {
+    slide.classList.toggle('active', idx === activeIndex);
+  });
+  dots.forEach(function(d, idx) {
+    d.classList.toggle('active', idx === activeIndex);
+  });
+}
+
+document.getElementById('car-prev').onclick = function() { showSlide(activeIndex - 1); };
+document.getElementById('car-next').onclick = function() { showSlide(activeIndex + 1); };
+
+showSlide(0);
+</script>
+</body>
+</html>
