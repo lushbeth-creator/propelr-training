@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propelr: Onboarding Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:'Inter',sans-serif;color:#1a1a2e;padding:0}
+
+.cal-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media (max-width:640px){.cal-wrap{grid-template-columns:1fr}}
+
+/* ===== Calendar ===== */
+.cal-card{background:transparent;padding:0;display:flex;flex-direction:column}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;width:386px;max-width:100%;margin:0 auto 1rem}
+.cal-month{font-family:'Inter',sans-serif;font-weight:700;font-size:19px;color:#1B2F5B}
+.cal-arrow{
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.cal-arrow:hover svg{stroke:#5D70AE}
+.cal-arrow svg{width:18px;height:18px;stroke:#59A398;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.cal-arrow.disabled{cursor:default;pointer-events:none}
+.cal-arrow.disabled svg{stroke:#d8dce8}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,50px);gap:6px;justify-content:center}
+.cal-dow{font-size:13px;font-weight:700;text-transform:uppercase;color:#888;text-align:center;padding:2px 0}
+.cal-day{
+  position:relative;width:50px;height:50px;display:flex;align-items:center;justify-content:center;
+  font-size:18.5px;color:#444;border-radius:6px;border:1px solid transparent;background:none;
+  font-family:'Inter',sans-serif;cursor:default;transition:background .15s,border-color .15s,color .15s;
+}
+.cal-day.blank{visibility:hidden}
+.cal-day.has-event{cursor:pointer;color:#1B2F5B;font-weight:700}
+.cal-day.has-event:hover{background:#DAF3EF;border-radius:50%}
+.cal-day.selected{background:#59A398;color:#fff;border-radius:50%}
+.cal-day .dot-row{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;gap:3px}
+.cal-day .dot{width:8px;height:8px;border-radius:50%;box-sizing:border-box;display:block}
+.cal-day.selected .dot{background:#fff !important;border-color:#fff !important}
+
+.cal-hint{font-size:13.5px;color:#59A398;font-weight:600;line-height:1.5;margin-top:16px;text-align:center}
+
+.cal-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:11px 16px;margin-top:18px;padding-top:14px;border-top:1px solid #d8dce8}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:#555}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-sizing:border-box}
+
+/* ===== Detail panel ===== */
+.detail-card{background:transparent;padding:0;display:flex;flex-direction:column}
+.detail-empty{display:none}
+.detail-title{font-family:'Inter',sans-serif;font-weight:700;font-size:19px;color:#1B2F5B;margin-bottom:9px;text-wrap:balance;flex-shrink:0}
+.detail-meta{display:flex;align-items:center;gap:6px;font-size:14px;color:#59A398;font-weight:600;margin-bottom:13px;flex-shrink:0}
+.detail-meta svg{width:15px;height:15px;stroke:#59A398;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.detail-desc{font-size:14px;color:#444;line-height:1.6;margin-bottom:13px;max-height:320px;overflow-y:auto;padding-right:4px;flex-shrink:0}
+.detail-desc p{margin-bottom:10px}
+.detail-note{font-size:14px;color:#59A398;font-weight:700;line-height:1.5;margin-bottom:11px;flex-shrink:0}
+.detail-actions{display:flex;flex-wrap:wrap;gap:9px;flex-shrink:0}
+.detail-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:#5D70AE;color:#fff;border-radius:7px;padding:.7rem 1.15rem;text-decoration:none;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:700;transition:background .15s;
+  cursor:pointer;border:none;
+}
+.detail-btn:hover{background:#59A398}
+.detail-btn.secondary{background:#ffffff;color:#5D70AE;border:1px solid #A6B3D5}
+.detail-btn.secondary:hover{background:#F3F6FF;color:#5D70AE}
+
+/* ===== Book 1:1 time, not tied to any date ===== */
+.booking-card{
+  margin-top:16px;border:1px solid #A6B3D5;border-radius:8px;
+  background:linear-gradient(160deg,#ffffff 0%,#E8EDF8 100%);
+  padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  transition:transform .18s ease, background .18s ease;
+}
+.booking-card:hover{background:linear-gradient(160deg,#ffffff 0%,#DAF3EF 100%)}
+.booking-icon{
+  width:30px;height:30px;flex-shrink:0;border-radius:7px;background:#ffffff;border:1px solid #A6B3D5;
+  display:flex;align-items:center;justify-content:center;
+}
+.booking-icon svg{width:16px;height:16px}
+.booking-text{flex:1;min-width:180px}
+.booking-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#59A398;margin-bottom:2px}
+.booking-title{font-family:'Inter',sans-serif;font-weight:700;font-size:13px;color:#1B2F5B;margin-bottom:2px}
+.booking-body{font-size:11.5px;color:#444;line-height:1.4}
+.booking-btn{
+  flex-shrink:0;background:#5D70AE;color:#fff;border-radius:6px;padding:.5rem .85rem;text-decoration:none;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:700;transition:background .15s;
+}
+.booking-btn:hover{background:#59A398}
+</style>
+</head>
+<body>
+
+<div class="cal-wrap">
+  <div class="cal-card">
+    <div class="cal-nav">
+      <span class="cal-arrow" id="cal-prev-arrow" onclick="shiftMonth(-1)">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </span>
+      <span class="cal-month" id="cal-month-label"></span>
+      <span class="cal-arrow" onclick="shiftMonth(1)">
+        <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </div>
+    <div class="cal-grid" id="cal-dow"></div>
+    <div class="cal-grid" id="cal-grid" style="margin-top:4px"></div>
+
+    <p class="cal-hint" id="cal-hint">Select a highlighted date to view session details.</p>
+
+    <div class="cal-legend" id="cal-legend"></div>
+
+    <div class="booking-card">
+      <div class="booking-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#5D70AE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M8 14h2"/></svg>
+      </div>
+      <div class="booking-text">
+        <p class="booking-eyebrow">Anytime</p>
+        <p class="booking-title">Want 1:1 Time With Enablement?</p>
+        <p class="booking-body">Not every question needs to wait for the next live session. Grab a spot on my calendar whenever it's useful, any day works.</p>
+      </div>
+      <a class="booking-btn" href="https://bookings.cloud.microsoft/bookwithme/user/0eb0701c0ce2428db0d0472921a2a548%40propelrpay.com?anonymous&ismsaljsauthenabled=true" target="_blank" rel="noopener">Book a Time</a>
+    </div>
+  </div>
+
+  <div class="detail-card" id="detail-card"></div>
+</div>
+
+<script>
+var CAT_COLOR = {
+  llo:      "#7B3FA0",
+  holiday:  "#C0392B",
+  townhall: "#59A398",
+  fiserv:   "#8B5E3C",
+  momentum: "#4C8C3B",
+  waypoint: "#2E86AB",
+  salescall:"#9A4C6B",
+  squarereseller: "#C77D00",
+  allhands: "#3C6E71"
+};
+var PAST_COLOR = "#B8860B";
+var CAT_LABEL = {
+  llo:      "Learning Lift-Off",
+  holiday:  "Company Holiday",
+  townhall: "Town Hall",
+  fiserv:   "Fiserv Wholesale Training",
+  momentum: "Momentum Monday",
+  waypoint: "Waypoint Wednesday",
+  salescall:"National Sales Call",
+  squarereseller: "Square Reseller Training",
+  allhands: "All Hands"
+};
+
+var townhallDesc = [
+  "Hosted by Angelo, this meeting brings the whole team together for a clear look at where Propelr is today and where we're headed next.",
+  "Expect insight into our priorities, how we're positioning Propelr for continued growth, and how every team plays a role in what's next."
+];
+var fiservDesc = [
+  "Fiserv Wholesale Training session. The deck and this session's recording are linked below."
+];
+var fiservDeckLink = "https://propelrpay1.sharepoint.com/:p:/s/Training/IQCCkmw7ju1DS5UUwWzvg_MoAQkTjbaJlDD1ACxkDPcp4Ww?e=qLjEMZ";
+
+var momentumDesc = ["A recurring Monday check-in L&D ran with the team to keep momentum going into the week."];
+var waypointDesc = ["A recurring midweek check-in L&D ran to help the team course-correct before the week got away."];
+var salesCallDesc = ["Company-wide sales call covering updates, wins, and alignment across teams."];
+var squareReselllerDesc = ["In-person training held by Square in St. Louis, covering Propelr's Square reseller program and how to position it with merchants."];
+var allHandsDesc = ["Company-wide All Hands meeting."];
+var lloGenericInvite = [
+  "Every member of the Prop plane is invested in your growth and is committed to creating ongoing learning opportunities that provide the tools and resources you need to win new business and deliver even more value to your existing clients.",
+  "That is why we are excited to invite you to our monthly Learning Lift-Off webinar series, where we take a deep dive into a new topic designed to sharpen your expertise and expand your selling power.",
+  "Topic to be announced soon. Have an idea for what we should cover? Send it our way."
+];
+var missedText = "We are sorry you missed this month's Learning Lift-Off. You can find the session recording here.";
+var recordingsLink = "https://propelrpay1.sharepoint.com/sites/Training/SitePages/Leaning%20Lift-Off.aspx";
+var topicMailto = "mailto:blush@propelrpay.com?subject=Learning%20Lift-Off%20Topic%20Idea";
+
+var pendingNote = "Invites for this session go out two months before the onboarding date. Check back closer to then.";
+var lloPendingNote = "Registration opens closer to the date. Check back soon.";
+var holidayNote = "Propelr is closed in observance of the holiday.";
+
+var ldBookingLink = "https://bookings.cloud.microsoft/bookwithme/user/0eb0701c0ce2428db0d0472921a2a548%40propelrpay.com?anonymous&ismsaljsauthenabled=true";
+
+function addCalUrl(subject, dateISO, startTime, endTime, offset, joinLink){
+  var start = dateISO + "T" + startTime + ":00" + offset;
+  var end = dateISO + "T" + endTime + ":00" + offset;
+  var body = "Join the session here: " + joinLink;
+  return "https://outlook.office.com/calendar/0/deeplink/compose"
+    + "?subject=" + encodeURIComponent(subject)
+    + "&startdt=" + encodeURIComponent(start)
+    + "&enddt=" + encodeURIComponent(end)
+    + "&body=" + encodeURIComponent(body)
+    + "&location=" + encodeURIComponent("Microsoft Teams")
+    + "&allday=false";
+}
+
+// EDT (-04:00) through Oct 2026, EST (-05:00) once DST ends Nov 1, 2026
+var EDT = "-04:00";
+var EST = "-05:00";
+
+var events = {};
+function pushEvent(dateISO, ev){
+  if (!events[dateISO]) events[dateISO] = [];
+  events[dateISO].push(ev);
+}
+
+function addLLO(dateISO, status, link, offset){
+  var ev = {
+    kind: "llo", status: status, title: "Learning Lift-Off: Topic TBD",
+    time: "3:00 PM EST", description: (status === "past") ? [missedText] : lloGenericInvite,
+    mailto: topicMailto
+  };
+  if (status === "confirmed") {
+    ev.join = link;
+  } else if (status === "past") {
+    ev.recordingLink = link || recordingsLink;
+  }
+  pushEvent(dateISO, ev);
+}
+function addHoliday(dateISO, title, customNote){
+  pushEvent(dateISO, { kind: "holiday", status: "fixed", title: title, note: customNote || holidayNote });
+}
+function addTownhall(dateISO, offset, link){
+  pushEvent(dateISO, {
+    kind: "townhall", status: "confirmed",
+    title: "Propelr Team Meeting: Charting Our Course \u2708\ufe0f",
+    time: "11:00 AM EST \u2022 Hosted by Angelo",
+    join: link,
+    description: townhallDesc
+  });
+}
+function addFiserv(dateISO, recordingLink){
+  pushEvent(dateISO, {
+    kind: "fiserv", status: "past", title: "Fiserv Wholesale Training",
+    time: "Recorded Session", recordingLink: recordingLink, deckLink: fiservDeckLink,
+    description: fiservDesc
+  });
+}
+function addPastGeneric(dateISO, kind, title, desc){
+  pushEvent(dateISO, { kind: kind, status: "past", title: title, description: desc });
+}
+
+// Learning Lift-Off (third Tuesday, July is the exception)
+addLLO("2026-03-17", "past", "https://propelrpay1.sharepoint.com/sites/Training/SitePages/Leaning%20Lift-Off.aspx#valor-paytech-virtual-terminal-(march-17)");
+events["2026-03-17"][0].title = "Learning Lift-Off: Valor PayTech Virtual Terminal";
+
+addLLO("2026-04-21", "past", "https://propelrpay1.sharepoint.com/sites/Training/SitePages/Leaning%20Lift-Off.aspx#valor-paytech-hardware-(april-21)");
+events["2026-04-21"][0].title = "Learning Lift-Off: Valor PayTech Hardware";
+
+addLLO("2026-05-28", "past", "https://propelrpay1.sharepoint.com/sites/Training/SitePages/Leaning%20Lift-Off.aspx#isv-referral-partnerships-(may-28)");
+events["2026-05-28"][0].title = "Learning Lift-Off: ISV & Referral Partnerships";
+
+addLLO("2026-06-16", "past", "https://propelrpay1.sharepoint.com/sites/Training/SitePages/Leaning%20Lift-Off.aspx#stratus-onboarding-(june-16)");
+events["2026-06-16"][0].title = "Learning Lift-Off: Stratus Onboarding";
+
+addLLO("2026-07-14", "past", "https://propelrpay1.sharepoint.com/sites/Training/SitePages/Leaning%20Lift-Off.aspx#equipment-financing-(july-14)");
+events["2026-07-14"][0].title = "Learning Lift-Off: Equipment Financing";
+addLLO("2026-08-18", "confirmed", "https://events.teams.microsoft.com/event/c88b6666-3c95-4062-bb37-b7ace6aa6498@db4bb98e-b39f-4bfd-b3e3-e0b809d1bb6a", EDT);
+addLLO("2026-09-15", "confirmed", "https://events.teams.microsoft.com/event/8562852e-45a3-4451-b6be-ecc13dccd11e@db4bb98e-b39f-4bfd-b3e3-e0b809d1bb6a", EDT);
+addLLO("2026-10-20", "confirmed", "https://events.teams.microsoft.com/event/0c821bcc-32e6-4617-96e5-1885f63e9074@db4bb98e-b39f-4bfd-b3e3-e0b809d1bb6a", EDT);
+addLLO("2026-11-17", "pending");
+addLLO("2026-12-15", "pending");
+
+// Company Holidays
+addHoliday("2026-09-07", "Labor Day");
+addHoliday("2026-11-26", "Thanksgiving");
+addHoliday("2026-12-25", "Christmas");
+
+// Past company holidays
+addHoliday("2025-12-25", "Christmas");
+addHoliday("2026-01-01", "New Year's Day");
+addHoliday("2026-01-19", "MLK Day");
+addHoliday("2026-02-16", "Presidents Day");
+addHoliday("2026-05-04", "Company Holiday");
+addHoliday("2026-05-22", "Half Day", "Propelr closes early today, dismissal at 2:00 PM.");
+addHoliday("2026-05-25", "Memorial Day");
+addHoliday("2026-07-02", "Half Day", "Propelr closes early today, dismissal at 2:00 PM.");
+addHoliday("2026-07-03", "Independence Day (Observed)");
+
+// Town Hall
+addTownhall("2026-07-28", EDT, "https://info.propelrpay.com/e3t/Ctc/OT+113/d4JChc04/VVy5pR2t2vpTW405cDq7rWYwsW3kyKQV5Ryx9rN412x8T5kvg8W50kH_H6lZ3lbW4Q-cT02Bm1wKW1Q7LwX5KdcPQW3lP3Wg4XzxGKN4mt__-75BDwW7PSxBP5Z5MH5W57H6F020Pz9bW1h4jHG4BTg9vN5b1_JPKsBGYW5Lh-9170mMRgW1xWyt96SqZf7W8_PLZw26PNnrW16VG_Q5jglpPW8xQs4g7pLZXCN3TQlHwF37C1W49jqxG4HF-ZKW1g0SPx2tCbxrVCn4S182H2pjV-418Z17zVz-Vrypdt5Kq18JW5Rvj6f46GXMQW49RsNM3pTl6XW643-063mfNqKW8kCx7q4hGs58VnHNzT5-KkF_VTdjPZ8RtB8hW3nG3LY56RWKSW882-1n1SfH3zW1CZvlf1v3ysgW6dyJv07cqPLcW9jYdct15nqk1W1F15Rw1gHcY_W2GcTZs63J7HddLPLcl04");
+
+// Fiserv Wholesale Training
+addFiserv("2026-02-10", "https://propelrpay1.sharepoint.com/:v:/s/Training/IQA4Nx08sCsHRKWLlKen2soNAR566JDz_YfJEVVbNOLjnp4?e=OD9B73");
+addFiserv("2026-02-11", "https://propelrpay1.sharepoint.com/:v:/s/Training/IQA4Nx08sCsHRKWLlKen2soNAR566JDz_YfJEVVbNOLjnp4?e=y9Izy1");
+addFiserv("2026-02-12", "https://propelrpay1.sharepoint.com/:v:/s/Training/IQDvS-wrXhULQLrQ5YYqZGOPAUolgBiMOhBguLJnrHxwH9s?e=qqHPEk");
+
+// Historical L&D record: Momentum Monday
+["2026-05-11","2026-05-18","2026-06-08","2026-06-15","2026-06-22","2026-06-29"].forEach(function(d){
+  addPastGeneric(d, "momentum", "Momentum Monday", momentumDesc);
+});
+
+// Historical L&D record: Waypoint Wednesday
+["2026-05-13","2026-05-20","2026-05-27","2026-06-10"].forEach(function(d){
+  addPastGeneric(d, "waypoint", "Waypoint Wednesday", waypointDesc);
+});
+
+// Historical L&D record: National Sales Call
+["2026-05-08","2026-06-05","2026-07-10"].forEach(function(d){
+  addPastGeneric(d, "salescall", "National Sales Call", salesCallDesc);
+});
+
+// Historical L&D record: Square Reseller Training
+["2026-06-01","2026-06-02","2026-06-03","2026-06-04"].forEach(function(d){
+  addPastGeneric(d, "squarereseller", "Square Reseller Training", squareReselllerDesc);
+});
+
+// Historical L&D record: All Hands (12/08 assumed 2025, precedes the Jan-Apr 2026 group)
+["2025-12-08","2026-01-12","2026-02-09","2026-03-09","2026-04-13"].forEach(function(d){
+  addPastGeneric(d, "allhands", "All Hands", allHandsDesc);
+});
+
+var _today = new Date();
+var viewYear = _today.getFullYear();
+var viewMonth = _today.getMonth();
+var MIN_YEAR = 2025;
+var MIN_MONTH = 11; // December 2025 is as far back as navigation goes
+var selectedKey = null;
+
+var dowNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function pad(n){ return n < 10 ? "0" + n : "" + n; }
+function keyFor(y,m,d){ return y + "-" + pad(m+1) + "-" + pad(d); }
+
+function todayISO(){
+  var t = new Date();
+  return t.getFullYear() + "-" + pad(t.getMonth() + 1) + "-" + pad(t.getDate());
+}
+
+// Onboarding-group events (welcome/training/tools/field) age into "past" automatically
+// once their date has gone by, no manual status updates needed month to month.
+function effectiveStatus(ev, key){
+  if (ev.kind === "holiday") return ev.status;
+  if (ev.status === "confirmed" && key < todayISO()) return "past";
+  return ev.status;
+}
+
+function formatDate(key){
+  var parts = key.split("-");
+  var y = parseInt(parts[0], 10);
+  var m = parseInt(parts[1], 10) - 1;
+  var d = parseInt(parts[2], 10);
+  return monthNames[m] + " " + d + ", " + y;
+}
+
+function renderDow(){
+  var el = document.getElementById('cal-dow');
+  var html = "";
+  for (var i = 0; i < 7; i++) html += '<div class="cal-dow">' + dowNames[i] + '</div>';
+  el.innerHTML = html;
+}
+
+function renderLegend(){
+  var html = "";
+  html += '<span class="legend-item"><span class="legend-dot" style="background:' + CAT_COLOR.llo + '"></span>Learning Lift-Off</span>';
+  html += '<span class="legend-item"><span class="legend-dot" style="background:' + CAT_COLOR.townhall + '"></span>Town Hall</span>';
+  html += '<span class="legend-item"><span class="legend-dot" style="background:' + CAT_COLOR.holiday + '"></span>Company Holiday</span>';
+  html += '<span class="legend-item"><span class="legend-dot" style="background:' + PAST_COLOR + '"></span>Past Session</span>';
+  html += '<span class="legend-item"><span class="legend-dot" style="background:transparent;border:2px solid #888"></span>Coming Soon</span>';
+  document.getElementById('cal-legend').innerHTML = html;
+}
+
+function renderCalendar(){
+  document.getElementById('cal-month-label').textContent = monthNames[viewMonth] + " " + viewYear;
+  var atMin = (viewYear === MIN_YEAR && viewMonth === MIN_MONTH);
+  document.getElementById('cal-prev-arrow').classList.toggle('disabled', atMin);
+  var firstDow = new Date(viewYear, viewMonth, 1).getDay();
+  var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  var grid = document.getElementById('cal-grid');
+  var html = "";
+
+  for (var b = 0; b < firstDow; b++) html += '<div class="cal-day blank"></div>';
+
+  for (var d = 1; d <= daysInMonth; d++) {
+    var key = keyFor(viewYear, viewMonth, d);
+    var dayEvents = events[key] || [];
+    var hasEvent = dayEvents.length > 0;
+    var cls = "cal-day" + (hasEvent ? " has-event" : "") + (key === selectedKey ? " selected" : "");
+    var marker = "";
+    if (hasEvent) {
+      var ev = dayEvents[0];
+      var status = effectiveStatus(ev, key);
+      var color = (status === "past") ? PAST_COLOR : CAT_COLOR[ev.kind];
+      var isHollow = (status === "pending");
+      var style = isHollow
+        ? "background:transparent;border:2px solid " + color
+        : "background:" + color + ";border:2px solid " + color;
+      marker = '<span class="dot-row"><span class="dot" style="' + style + '"></span></span>';
+    }
+    var click = hasEvent ? ' onclick="selectDate(\'' + key + '\')"' : "";
+    html += '<div class="' + cls + '"' + click + '>' + d + marker + '</div>';
+  }
+
+  grid.innerHTML = html;
+}
+
+function selectDate(key){
+  selectedKey = key;
+  renderCalendar();
+  renderDetail(key);
+}
+
+function renderDetail(key){
+  var dayEvents = events[key] || [];
+  var card = document.getElementById('detail-card');
+  var hint = document.getElementById('cal-hint');
+  if (dayEvents.length === 0) {
+    card.innerHTML = "";
+    hint.style.display = "block";
+    return;
+  }
+  hint.style.display = "none";
+
+  var blocks = [];
+  for (var i = 0; i < dayEvents.length; i++) {
+    blocks.push(renderEventBlock(dayEvents[i], key));
+  }
+  card.innerHTML = blocks.join('<div style="border-top:1px solid #d8dce8;margin:16px 0;"></div>');
+}
+
+function renderEventBlock(ev, key){
+  if (ev.kind === "holiday") {
+    return '<p class="detail-title">' + ev.title + '</p>' +
+      '<p class="detail-meta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' + formatDate(key) + '</p>' +
+      '<p class="detail-note">' + ev.note + '</p>';
+  }
+
+  var status = effectiveStatus(ev, key);
+
+  var descHtml = "";
+  for (var i = 0; i < ev.description.length; i++) {
+    descHtml += "<p>" + ev.description[i] + "</p>";
+  }
+
+  var metaText = (status === "past") ? formatDate(key) : (ev.time + ' \u2022 ' + formatDate(key));
+  var metaHtml = '<p class="detail-meta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' + metaText + '</p>';
+
+  var noteHtml = "";
+  var actionsHtml = '<div class="detail-actions">';
+
+  if (status === "past" && ev.recordingLink) {
+    actionsHtml += '<a class="detail-btn" href="' + ev.recordingLink + '" target="_blank" rel="noopener">View Recording</a>';
+    if (ev.deckLink) {
+      actionsHtml += '<a class="detail-btn secondary" href="' + ev.deckLink + '" target="_blank" rel="noopener">View Deck</a>';
+    }
+  } else if (status === "past") {
+    noteHtml = '<p class="detail-note">This session has already taken place.</p>';
+  } else if (status === "pending") {
+    noteHtml = '<p class="detail-note">' + (ev.kind === "llo" ? lloPendingNote : pendingNote) + '</p>';
+    if (ev.mailto) {
+      actionsHtml += '<a class="detail-btn secondary" href="' + ev.mailto + '">Email a topic idea</a>';
+    }
+  } else if (ev.join || ev.addCal) {
+    if (ev.kind === "llo") {
+      actionsHtml += '<a class="detail-btn" href="' + ev.join + '" target="_blank" rel="noopener">Register Here</a>';
+    } else if (ev.kind === "townhall") {
+      actionsHtml += '<a class="detail-btn" href="' + ev.join + '" target="_blank" rel="noopener">Register</a>';
+    } else if (ev.addCal) {
+      actionsHtml += '<a class="detail-btn" href="' + ev.addCal + '" target="_blank" rel="noopener">Add to Calendar</a>';
+    }
+    if (ev.mailto) {
+      actionsHtml += '<a class="detail-btn secondary" href="' + ev.mailto + '">Email a topic idea</a>';
+    }
+  }
+  if (ev.bookingLink) {
+    actionsHtml += '<a class="detail-btn" href="' + ev.bookingLink + '" target="_blank" rel="noopener">Schedule Time</a>';
+  }
+  actionsHtml += '</div>';
+
+  return '<p class="detail-title">' + ev.title + '</p>' +
+    metaHtml +
+    '<div class="detail-desc">' + descHtml + '</div>' +
+    noteHtml +
+    actionsHtml;
+}
+
+function shiftMonth(dir){
+  var newMonth = viewMonth + dir;
+  var newYear = viewYear;
+  if (newMonth < 0) { newMonth = 11; newYear--; }
+  if (newMonth > 11) { newMonth = 0; newYear++; }
+  if (newYear < MIN_YEAR || (newYear === MIN_YEAR && newMonth < MIN_MONTH)) {
+    return; // don't go earlier than December 2025
+  }
+  viewMonth = newMonth;
+  viewYear = newYear;
+  renderCalendar();
+  renderDetail(selectedKey);
+}
+
+renderDow();
+renderLegend();
+renderCalendar();
+</script>
+</body>
+</html>
